@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from arrow import util
+from strelki import util
 
 
 class TestUtil:

@@ -1,9 +1,9 @@
-Arrow: Better dates & times for Python
+Strelki: Better dates & times for Python
 ======================================
 
 Release v\ |release| (`Installation`_) (`Changelog <releases.html>`_)
 
-`Go to repository <https://github.com/arrow-py/arrow>`_
+`Go to repository <https://github.com/krisfremen/strelki>`_
 
 .. include:: ../README.rst
   :start-after: start-inclusion-marker-do-not-remove

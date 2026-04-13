@@ -1,5 +1,5 @@
 """
-Provides the default implementation of :class:`ArrowFactory <arrow.factory.ArrowFactory>`
+Provides the default implementation of :class:`ArrowFactory <strelki.factory.ArrowFactory>`
 methods for use as a module API.
 
 """
@@ -9,9 +9,9 @@ from datetime import tzinfo as dt_tzinfo
 from time import struct_time
 from typing import Any, List, Optional, Tuple, Type, Union, overload
 
-from arrow.arrow import TZ_EXPR, Arrow
-from arrow.constants import DEFAULT_LOCALE
-from arrow.factory import ArrowFactory
+from strelki.strelki import TZ_EXPR, Arrow
+from strelki.constants import DEFAULT_LOCALE
+from strelki.factory import ArrowFactory
 
 # internal default factory.
 _factory = ArrowFactory()
@@ -81,7 +81,7 @@ def get(
 
 
 def get(*args: Any, **kwargs: Any) -> Arrow:
-    """Calls the default :class:`ArrowFactory <arrow.factory.ArrowFactory>` ``get`` method."""
+    """Calls the default :class:`ArrowFactory <strelki.factory.ArrowFactory>` ``get`` method."""
 
     return _factory.get(*args, **kwargs)
 
@@ -90,7 +90,7 @@ get.__doc__ = _factory.get.__doc__
 
 
 def utcnow() -> Arrow:
-    """Calls the default :class:`ArrowFactory <arrow.factory.ArrowFactory>` ``utcnow`` method."""
+    """Calls the default :class:`ArrowFactory <strelki.factory.ArrowFactory>` ``utcnow`` method."""
 
     return _factory.utcnow()
 
@@ -99,7 +99,7 @@ utcnow.__doc__ = _factory.utcnow.__doc__
 
 
 def now(tz: Optional[TZ_EXPR] = None) -> Arrow:
-    """Calls the default :class:`ArrowFactory <arrow.factory.ArrowFactory>` ``now`` method."""
+    """Calls the default :class:`ArrowFactory <strelki.factory.ArrowFactory>` ``now`` method."""
 
     return _factory.now(tz)
 
@@ -108,10 +108,10 @@ now.__doc__ = _factory.now.__doc__
 
 
 def factory(type: Type[Arrow]) -> ArrowFactory:
-    """Returns an :class:`.ArrowFactory` for the specified :class:`Arrow <arrow.arrow.Arrow>`
+    """Returns an :class:`.ArrowFactory` for the specified :class:`Arrow <strelki.strelki.Arrow>`
     or derived type.
 
-    :param type: the type, :class:`Arrow <arrow.arrow.Arrow>` or derived.
+    :param type: the type, :class:`Arrow <strelki.strelki.Arrow>` or derived.
 
     """
 

@@ -1,11 +1,11 @@
-"""Provides the :class:`Arrow <arrow.formatter.DateTimeFormatter>` class, an improved formatter for datetimes."""
+"""Provides the :class:`Arrow <strelki.formatter.DateTimeFormatter>` class, an improved formatter for datetimes."""
 
 import re
 from datetime import datetime, timedelta, timezone
 from typing import Final, Optional, Pattern, cast
 
-from arrow import locales
-from arrow.constants import DEFAULT_LOCALE
+from strelki import locales
+from strelki.constants import DEFAULT_LOCALE
 
 FORMAT_ATOM: Final[str] = "YYYY-MM-DD HH:mm:ssZZ"
 FORMAT_COOKIE: Final[str] = "dddd, DD-MMM-YYYY HH:mm:ss ZZZ"
@@ -122,7 +122,7 @@ class DateTimeFormatter:
             separator = ":" if token == "ZZ" else ""
             tz = timezone.utc if dt.tzinfo is None else dt.tzinfo
             # `dt` must be aware object. Otherwise, this line will raise AttributeError
-            # https://github.com/arrow-py/arrow/pull/883#discussion_r529866834
+            # https://github.com/krisfremen/strelki/pull/883#discussion_r529866834
             # datetime awareness: https://docs.python.org/3/library/datetime.html#aware-and-naive-objects
             total_minutes = int(cast(timedelta, tz.utcoffset(dt)).total_seconds() / 60)
 

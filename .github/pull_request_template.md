@@ -1,6 +1,6 @@
 ## Pull Request Checklist
 
-Thank you for taking the time to improve Arrow! Before submitting your pull request, please check all *appropriate* boxes:
+Thank you for taking the time to improve Strelki! Before submitting your pull request, please check all *appropriate* boxes:
 
 <!-- Check boxes by placing an x in the brackets like this: [x] -->
 - [ ] 🧪  Added **tests** for changed code.
@@ -16,7 +16,7 @@ If you have *any* questions about your code changes or any of the points above, 
 <!--
 Replace this commented text block with a description of your code changes.
 
-If your PR has an associated issue, insert the issue number (e.g. #703) or directly link to the GitHub issue (e.g. https://github.com/arrow-py/arrow/issues/703).
+If your PR has an associated issue, insert the issue number (e.g. #703) or directly link to the GitHub issue (e.g. https://github.com/krisfremen/strelki/issues/703).
 
 Pro-tip: writing "Closes: #703" in the PR body will automatically close issue #703 when the PR is merged.
 -->

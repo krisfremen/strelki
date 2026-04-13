@@ -3,7 +3,7 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "arrow"
+name = "strelki"
 authors = [{name = "Chris Smith", email = "crsmithdev@gmail.com"}]
 readme = "README.rst"
 license = {file = "LICENSE"}
@@ -32,7 +32,7 @@ dependencies = [
 requires-python = ">=3.8"
 description = "Better dates & times for Python"
 keywords = [
-    "arrow",
+    "strelki",
     "date",
     "time",
     "datetime",
@@ -61,9 +61,9 @@ doc = [
 ]
 
 [project.urls]
-Documentation = "https://arrow.readthedocs.io"
-Source = "https://github.com/arrow-py/arrow"
-Issues = "https://github.com/arrow-py/arrow/issues"
+Documentation = "https://strelki.readthedocs.io"
+Source = "https://github.com/krisfremen/strelki"
+Issues = "https://github.com/krisfremen/strelki/issues"
 
 [tool.flit.module]
-name = "arrow"
+name = "strelki"

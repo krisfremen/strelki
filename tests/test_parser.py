@@ -11,10 +11,10 @@ try:
 except ImportError:
     from backports.zoneinfo import ZoneInfo
 
-import arrow
-from arrow import formatter, parser
-from arrow.constants import MAX_TIMESTAMP_US
-from arrow.parser import DateTimeParser, ParserError, ParserMatchError
+import strelki
+from strelki import formatter, parser
+from strelki.constants import MAX_TIMESTAMP_US
+from strelki.parser import DateTimeParser, ParserError, ParserMatchError
 
 from .utils import make_full_tz_list
 
@@ -23,7 +23,7 @@ from .utils import make_full_tz_list
 class TestDateTimeParser:
     def test_parse_multiformat(self, mocker):
         mocker.patch(
-            "arrow.parser.DateTimeParser.parse",
+            "strelki.parser.DateTimeParser.parse",
             string="str",
             fmt="fmt_a",
             side_effect=parser.ParserError,
@@ -34,7 +34,7 @@ class TestDateTimeParser:
 
         mock_datetime = mocker.Mock()
         mocker.patch(
-            "arrow.parser.DateTimeParser.parse",
+            "strelki.parser.DateTimeParser.parse",
             string="str",
             fmt="fmt_b",
             return_value=mock_datetime,
@@ -45,14 +45,14 @@ class TestDateTimeParser:
 
     def test_parse_multiformat_all_fail(self, mocker):
         mocker.patch(
-            "arrow.parser.DateTimeParser.parse",
+            "strelki.parser.DateTimeParser.parse",
             string="str",
             fmt="fmt_a",
             side_effect=parser.ParserError,
         )
 
         mocker.patch(
-            "arrow.parser.DateTimeParser.parse",
+            "strelki.parser.DateTimeParser.parse",
             string="str",
             fmt="fmt_b",
             side_effect=parser.ParserError,
@@ -66,7 +66,7 @@ class TestDateTimeParser:
             pass
 
         mocker.patch(
-            "arrow.parser.DateTimeParser.parse",
+            "strelki.parser.DateTimeParser.parse",
             string="str",
             fmt="fmt_a",
             side_effect=UnselfExpectedError,
@@ -89,7 +89,7 @@ class TestDateTimeParser:
 
     def test_parser_no_caching(self, mocker):
         mocked_parser = mocker.patch(
-            "arrow.parser.DateTimeParser._generate_pattern_re", fmt="fmt_a"
+            "strelki.parser.DateTimeParser._generate_pattern_re", fmt="fmt_a"
         )
         self.parser = parser.DateTimeParser(cache_size=0)
         for _ in range(100):
@@ -97,7 +97,7 @@ class TestDateTimeParser:
         assert mocked_parser.call_count == 100
 
     def test_parser_1_line_caching(self, mocker):
-        mocked_parser = mocker.patch("arrow.parser.DateTimeParser._generate_pattern_re")
+        mocked_parser = mocker.patch("strelki.parser.DateTimeParser._generate_pattern_re")
         self.parser = parser.DateTimeParser(cache_size=1)
 
         for _ in range(100):
@@ -116,7 +116,7 @@ class TestDateTimeParser:
         assert mocked_parser.call_args_list[2] == mocker.call(fmt="fmt_a")
 
     def test_parser_multiple_line_caching(self, mocker):
-        mocked_parser = mocker.patch("arrow.parser.DateTimeParser._generate_pattern_re")
+        mocked_parser = mocker.patch("strelki.parser.DateTimeParser._generate_pattern_re")
         self.parser = parser.DateTimeParser(cache_size=2)
 
         for _ in range(100):
@@ -169,7 +169,7 @@ class TestDateTimeParser:
 class TestDateTimeParserParse:
     def test_parse_list(self, mocker):
         mocker.patch(
-            "arrow.parser.DateTimeParser._parse_multiformat",
+            "strelki.parser.DateTimeParser._parse_multiformat",
             string="str",
             formats=["fmt_a", "fmt_b"],
             return_value="result",
@@ -179,8 +179,8 @@ class TestDateTimeParserParse:
         assert result == "result"
 
     def test_parse_unrecognized_token(self, mocker):
-        mocker.patch.dict("arrow.parser.DateTimeParser._BASE_INPUT_RE_MAP")
-        del arrow.parser.DateTimeParser._BASE_INPUT_RE_MAP["YYYY"]
+        mocker.patch.dict("strelki.parser.DateTimeParser._BASE_INPUT_RE_MAP")
+        del strelki.parser.DateTimeParser._BASE_INPUT_RE_MAP["YYYY"]
 
         # need to make another local parser to apply patch changes
         _parser = parser.DateTimeParser()
@@ -222,11 +222,11 @@ class TestDateTimeParserParse:
         self.expected = datetime.fromtimestamp(float_timestamp, tz=tz_utc)
         assert self.parser.parse(f"{float_timestamp:f}", "X") == self.expected
 
-        # test handling of ns timestamp (arrow will round to 6 digits regardless)
+        # test handling of ns timestamp (strelki will round to 6 digits regardless)
         self.expected = datetime.fromtimestamp(float_timestamp, tz=tz_utc)
         assert self.parser.parse(f"{float_timestamp:f}123", "X") == self.expected
 
-        # test ps timestamp (arrow will round to 6 digits regardless)
+        # test ps timestamp (strelki will round to 6 digits regardless)
         self.expected = datetime.fromtimestamp(float_timestamp, tz=tz_utc)
         assert self.parser.parse(f"{float_timestamp:f}123456", "X") == self.expected
 

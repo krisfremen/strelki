@@ -10,69 +10,69 @@ Get 'now' easily:
 
 .. code-block:: python
 
-    >>> arrow.utcnow()
+    >>> strelki.utcnow()
     <Arrow [2013-05-07T04:20:39.369271+00:00]>
 
-    >>> arrow.now()
+    >>> strelki.now()
     <Arrow [2013-05-06T21:20:40.841085-07:00]>
 
-    >>> arrow.now('US/Pacific')
+    >>> strelki.now('US/Pacific')
     <Arrow [2013-05-06T21:20:44.761511-07:00]>
 
 Create from timestamps (:code:`int` or :code:`float`):
 
 .. code-block:: python
 
-    >>> arrow.get(1367900664)
+    >>> strelki.get(1367900664)
     <Arrow [2013-05-07T04:24:24+00:00]>
 
-    >>> arrow.get(1367900664.152325)
+    >>> strelki.get(1367900664.152325)
     <Arrow [2013-05-07T04:24:24.152325+00:00]>
 
 Use a naive or timezone-aware datetime, or flexibly specify a timezone:
 
 .. code-block:: python
 
-    >>> arrow.get(datetime.utcnow())
+    >>> strelki.get(datetime.utcnow())
     <Arrow [2013-05-07T04:24:24.152325+00:00]>
 
-    >>> arrow.get(datetime(2013, 5, 5), 'US/Pacific')
+    >>> strelki.get(datetime(2013, 5, 5), 'US/Pacific')
     <Arrow [2013-05-05T00:00:00-07:00]>
 
     >>> from dateutil import tz
-    >>> arrow.get(datetime(2013, 5, 5), tz.gettz('US/Pacific'))
+    >>> strelki.get(datetime(2013, 5, 5), tz.gettz('US/Pacific'))
     <Arrow [2013-05-05T00:00:00-07:00]>
 
-    >>> arrow.get(datetime.now(tz.gettz('US/Pacific')))
+    >>> strelki.get(datetime.now(tz.gettz('US/Pacific')))
     <Arrow [2013-05-06T21:24:49.552236-07:00]>
 
 Parse from a string:
 
 .. code-block:: python
 
-    >>> arrow.get('2013-05-05 12:30:45', 'YYYY-MM-DD HH:mm:ss')
+    >>> strelki.get('2013-05-05 12:30:45', 'YYYY-MM-DD HH:mm:ss')
     <Arrow [2013-05-05T12:30:45+00:00]>
 
 Search a date in a string:
 
 .. code-block:: python
 
-    >>> arrow.get('June was born in May 1980', 'MMMM YYYY')
+    >>> strelki.get('June was born in May 1980', 'MMMM YYYY')
     <Arrow [1980-05-01T00:00:00+00:00]>
 
 Some ISO 8601 compliant strings are recognized and parsed without a format string:
 
-    >>> arrow.get('2013-09-30T15:34:00.000-07:00')
+    >>> strelki.get('2013-09-30T15:34:00.000-07:00')
     <Arrow [2013-09-30T15:34:00-07:00]>
 
 Arrow objects can be instantiated directly too, with the same arguments as a datetime:
 
 .. code-block:: python
 
-    >>> arrow.get(2013, 5, 5)
+    >>> strelki.get(2013, 5, 5)
     <Arrow [2013-05-05T00:00:00+00:00]>
 
-    >>> arrow.Arrow(2013, 5, 5)
+    >>> strelki.Arrow(2013, 5, 5)
     <Arrow [2013-05-05T00:00:00+00:00]>
 
 Properties
@@ -82,7 +82,7 @@ Get a datetime or timestamp representation:
 
 .. code-block:: python
 
-    >>> a = arrow.utcnow()
+    >>> a = strelki.utcnow()
     >>> a.datetime
     datetime.datetime(2013, 5, 7, 4, 38, 15, 447644, tzinfo=tzutc())
 
@@ -116,11 +116,11 @@ Call datetime functions that return properties:
 Replace & Shift
 ~~~~~~~~~~~~~~~
 
-Get a new :class:`Arrow <arrow.arrow.Arrow>` object, with altered attributes, just as you would with a datetime:
+Get a new :class:`Arrow <strelki.strelki.Arrow>` object, with altered attributes, just as you would with a datetime:
 
 .. code-block:: python
 
-    >>> arw = arrow.utcnow()
+    >>> arw = strelki.utcnow()
     >>> arw
     <Arrow [2013-05-12T03:29:35.334214+00:00]>
 
@@ -145,7 +145,7 @@ Move between the earlier and later moments of an ambiguous time:
 
 .. code-block:: python
 
-    >>> paris_transition = arrow.Arrow(2019, 10, 27, 2, tzinfo="Europe/Paris", fold=0)
+    >>> paris_transition = strelki.Arrow(2019, 10, 27, 2, tzinfo="Europe/Paris", fold=0)
     >>> paris_transition
     <Arrow [2019-10-27T02:00:00+02:00]>
     >>> paris_transition.ambiguous
@@ -160,7 +160,7 @@ For a list of formatting values, see :ref:`supported-tokens`
 
 .. code-block:: python
 
-    >>> arrow.utcnow().format('YYYY-MM-DD HH:mm:ss ZZ')
+    >>> strelki.utcnow().format('YYYY-MM-DD HH:mm:ss ZZ')
     '2013-05-07 05:23:16 -00:00'
 
 Convert
@@ -170,7 +170,7 @@ Convert from UTC to other timezones by name or tzinfo:
 
 .. code-block:: python
 
-    >>> utc = arrow.utcnow()
+    >>> utc = strelki.utcnow()
     >>> utc
     <Arrow [2013-05-07T05:24:11.823627+00:00]>
 
@@ -198,7 +198,7 @@ Humanize relative to now:
 
 .. code-block:: python
 
-    >>> past = arrow.utcnow().shift(hours=-1)
+    >>> past = strelki.utcnow().shift(hours=-1)
     >>> past.humanize()
     'an hour ago'
 
@@ -206,7 +206,7 @@ Or another Arrow, or datetime:
 
 .. code-block:: python
 
-    >>> present = arrow.utcnow()
+    >>> present = strelki.utcnow()
     >>> future = present.shift(hours=2)
     >>> future.humanize(present)
     'in 2 hours'
@@ -215,7 +215,7 @@ Indicate time as relative or include only the distance
 
 .. code-block:: python
 
-    >>> present = arrow.utcnow()
+    >>> present = strelki.utcnow()
     >>> future = present.shift(hours=2)
     >>> future.humanize(present)
     'in 2 hours'
@@ -227,7 +227,7 @@ Indicate a specific time granularity (or multiple):
 
 .. code-block:: python
 
-    >>> present = arrow.utcnow()
+    >>> present = strelki.utcnow()
     >>> future = present.shift(minutes=66)
     >>> future.humanize(present, granularity="minute")
     'in 66 minutes'
@@ -243,7 +243,7 @@ Support for a growing number of locales (see ``locales.py`` for supported langua
 .. code-block:: python
 
 
-    >>> future = arrow.utcnow().shift(hours=1)
+    >>> future = strelki.utcnow().shift(hours=1)
     >>> future.humanize(a, locale='ru')
     'через 2 час(а,ов)'
 
@@ -254,7 +254,7 @@ Take a human readable string and use it to shift into a past time:
 
 .. code-block:: python
 
-    >>> arw = arrow.utcnow()
+    >>> arw = strelki.utcnow()
     >>> arw
     <Arrow [2021-04-20T22:27:34.787885+00:00]>
     >>> earlier = arw.dehumanize("2 days ago")
@@ -265,7 +265,7 @@ Or use it to shift into a future time:
 
 .. code-block:: python
 
-    >>> arw = arrow.utcnow()
+    >>> arw = strelki.utcnow()
     >>> arw
     <Arrow [2021-04-20T22:27:34.787885+00:00]>
     >>> later = arw.dehumanize("in a month")
@@ -276,7 +276,7 @@ Support for a growing number of locales (see ``constants.py`` for supported lang
 
 .. code-block:: python
 
-    >>> arw = arrow.utcnow()
+    >>> arw = strelki.utcnow()
     >>> arw
     <Arrow [2021-04-20T22:27:34.787885+00:00]>
     >>> later = arw.dehumanize("एक माह बाद", locale="hi")
@@ -290,23 +290,23 @@ Get the time span of any unit:
 
 .. code-block:: python
 
-    >>> arrow.utcnow().span('hour')
+    >>> strelki.utcnow().span('hour')
     (<Arrow [2013-05-07T05:00:00+00:00]>, <Arrow [2013-05-07T05:59:59.999999+00:00]>)
 
 Or just get the floor and ceiling:
 
 .. code-block:: python
 
-    >>> arrow.utcnow().floor('hour')
+    >>> strelki.utcnow().floor('hour')
     <Arrow [2013-05-07T05:00:00+00:00]>
 
-    >>> arrow.utcnow().ceil('hour')
+    >>> strelki.utcnow().ceil('hour')
     <Arrow [2013-05-07T05:59:59.999999+00:00]>
 
-    >>> arrow.utcnow().floor('week', week_start=7)
+    >>> strelki.utcnow().floor('week', week_start=7)
     <Arrow [2013-05-05T00:00:00+00:00]>
 
-    >>> arrow.utcnow().ceil('week', week_start=7)
+    >>> strelki.utcnow().ceil('week', week_start=7)
     <Arrow [2013-05-11T23:59:59.999999+00:00]>
 
 You can also get a range of time spans:
@@ -315,7 +315,7 @@ You can also get a range of time spans:
 
     >>> start = datetime(2013, 5, 5, 12, 30)
     >>> end = datetime(2013, 5, 5, 17, 15)
-    >>> for r in arrow.Arrow.span_range('hour', start, end):
+    >>> for r in strelki.Arrow.span_range('hour', start, end):
     ...     print(r)
     ...
     (<Arrow [2013-05-05T12:00:00+00:00]>, <Arrow [2013-05-05T12:59:59.999999+00:00]>)
@@ -330,7 +330,7 @@ Or just iterate over a range of time:
 
     >>> start = datetime(2013, 5, 5, 12, 30)
     >>> end = datetime(2013, 5, 5, 17, 15)
-    >>> for r in arrow.Arrow.range('hour', start, end):
+    >>> for r in strelki.Arrow.range('hour', start, end):
     ...     print(repr(r))
     ...
     <Arrow [2013-05-05T12:30:00+00:00]>
@@ -349,11 +349,11 @@ Use factories to harness Arrow's module API for a custom Arrow-derived type.  Fi
 
 .. code-block:: python
 
-    >>> class CustomArrow(arrow.Arrow):
+    >>> class CustomArrow(strelki.Arrow):
     ...
     ...     def days_till_xmas(self):
     ...
-    ...         xmas = arrow.Arrow(self.year, 12, 25)
+    ...         xmas = strelki.Arrow(self.year, 12, 25)
     ...
     ...         if self > xmas:
     ...             xmas = xmas.shift(years=1)
@@ -365,7 +365,7 @@ Then get and use a factory for it:
 
 .. code-block:: python
 
-    >>> factory = arrow.ArrowFactory(CustomArrow)
+    >>> factory = strelki.ArrowFactory(CustomArrow)
     >>> custom = factory.utcnow()
     >>> custom
     >>> <CustomArrow [2013-05-27T23:35:35.533160+00:00]>
@@ -461,26 +461,26 @@ There are several formatting standards that are provided as built-in tokens.
 
 .. code-block:: python
 
-    >>> arw = arrow.utcnow()
-    >>> arw.format(arrow.FORMAT_ATOM)
+    >>> arw = strelki.utcnow()
+    >>> arw.format(strelki.FORMAT_ATOM)
     '2020-05-27 10:30:35+00:00'
-    >>> arw.format(arrow.FORMAT_COOKIE)
+    >>> arw.format(strelki.FORMAT_COOKIE)
     'Wednesday, 27-May-2020 10:30:35 UTC'
-    >>> arw.format(arrow.FORMAT_RSS)
+    >>> arw.format(strelki.FORMAT_RSS)
     'Wed, 27 May 2020 10:30:35 +0000'
-    >>> arw.format(arrow.FORMAT_RFC822)
+    >>> arw.format(strelki.FORMAT_RFC822)
     'Wed, 27 May 20 10:30:35 +0000'
-    >>> arw.format(arrow.FORMAT_RFC850)
+    >>> arw.format(strelki.FORMAT_RFC850)
     'Wednesday, 27-May-20 10:30:35 UTC'
-    >>> arw.format(arrow.FORMAT_RFC1036)
+    >>> arw.format(strelki.FORMAT_RFC1036)
     'Wed, 27 May 20 10:30:35 +0000'
-    >>> arw.format(arrow.FORMAT_RFC1123)
+    >>> arw.format(strelki.FORMAT_RFC1123)
     'Wed, 27 May 2020 10:30:35 +0000'
-    >>> arw.format(arrow.FORMAT_RFC2822)
+    >>> arw.format(strelki.FORMAT_RFC2822)
     'Wed, 27 May 2020 10:30:35 +0000'
-     >>> arw.format(arrow.FORMAT_RFC3339)
+     >>> arw.format(strelki.FORMAT_RFC3339)
     '2020-05-27 10:30:35+00:00'
-     >>> arw.format(arrow.FORMAT_W3C)
+     >>> arw.format(strelki.FORMAT_W3C)
     '2020-05-27 10:30:35+00:00'
 
 Escaping Formats
@@ -496,19 +496,19 @@ Any `token <Supported Tokens_>`_ or phrase can be escaped as follows:
 .. code-block:: python
 
     >>> fmt = "YYYY-MM-DD h [h] m"
-    >>> arw = arrow.get("2018-03-09 8 h 40", fmt)
+    >>> arw = strelki.get("2018-03-09 8 h 40", fmt)
     <Arrow [2018-03-09T08:40:00+00:00]>
     >>> arw.format(fmt)
     '2018-03-09 8 h 40'
 
     >>> fmt = "YYYY-MM-DD h [hello] m"
-    >>> arw = arrow.get("2018-03-09 8 hello 40", fmt)
+    >>> arw = strelki.get("2018-03-09 8 hello 40", fmt)
     <Arrow [2018-03-09T08:40:00+00:00]>
     >>> arw.format(fmt)
     '2018-03-09 8 hello 40'
 
     >>> fmt = "YYYY-MM-DD h [hello world] m"
-    >>> arw = arrow.get("2018-03-09 8 hello world 40", fmt)
+    >>> arw = strelki.get("2018-03-09 8 hello world 40", fmt)
     <Arrow [2018-03-09T08:40:00+00:00]>
     >>> arw.format(fmt)
     '2018-03-09 8 hello world 40'
@@ -523,13 +523,13 @@ You can also escape regular expressions by enclosing them within square brackets
 .. code-block:: python
 
     >>> fmt = r"ddd[\s+]MMM[\s+]DD[\s+]HH:mm:ss[\s+]YYYY"
-    >>> arrow.get("Mon Sep 08 16:41:45 2014", fmt)
+    >>> strelki.get("Mon Sep 08 16:41:45 2014", fmt)
     <Arrow [2014-09-08T16:41:45+00:00]>
 
-    >>> arrow.get("Mon \tSep 08   16:41:45     2014", fmt)
+    >>> strelki.get("Mon \tSep 08   16:41:45     2014", fmt)
     <Arrow [2014-09-08T16:41:45+00:00]>
 
-    >>> arrow.get("Mon Sep 08   16:41:45   2014", fmt)
+    >>> strelki.get("Mon Sep 08   16:41:45   2014", fmt)
     <Arrow [2014-09-08T16:41:45+00:00]>
 
 Punctuation
@@ -539,27 +539,27 @@ Date and time formats may be fenced on either side by one punctuation character 
 
 .. code-block:: python
 
-    >>> arrow.get("Cool date: 2019-10-31T09:12:45.123456+04:30.", "YYYY-MM-DDTHH:mm:ss.SZZ")
+    >>> strelki.get("Cool date: 2019-10-31T09:12:45.123456+04:30.", "YYYY-MM-DDTHH:mm:ss.SZZ")
     <Arrow [2019-10-31T09:12:45.123456+04:30]>
 
-    >>> arrow.get("Tomorrow (2019-10-31) is Halloween!", "YYYY-MM-DD")
+    >>> strelki.get("Tomorrow (2019-10-31) is Halloween!", "YYYY-MM-DD")
     <Arrow [2019-10-31T00:00:00+00:00]>
 
-    >>> arrow.get("Halloween is on 2019.10.31.", "YYYY.MM.DD")
+    >>> strelki.get("Halloween is on 2019.10.31.", "YYYY.MM.DD")
     <Arrow [2019-10-31T00:00:00+00:00]>
 
-    >>> arrow.get("It's Halloween tomorrow (2019-10-31)!", "YYYY-MM-DD")
+    >>> strelki.get("It's Halloween tomorrow (2019-10-31)!", "YYYY-MM-DD")
     # Raises exception because there are multiple punctuation marks following the date
 
 Redundant Whitespace
 ~~~~~~~~~~~~~~~~~~~~
 
-Redundant whitespace characters (spaces, tabs, and newlines) can be normalized automatically by passing in the ``normalize_whitespace`` flag to ``arrow.get``:
+Redundant whitespace characters (spaces, tabs, and newlines) can be normalized automatically by passing in the ``normalize_whitespace`` flag to ``strelki.get``:
 
 .. code-block:: python
 
-    >>> arrow.get('\t \n  2013-05-05T12:30:45.123456 \t \n', normalize_whitespace=True)
+    >>> strelki.get('\t \n  2013-05-05T12:30:45.123456 \t \n', normalize_whitespace=True)
     <Arrow [2013-05-05T12:30:45.123456+00:00]>
 
-    >>> arrow.get('2013-05-05  T \n   12:30:45\t123456', 'YYYY-MM-DD T HH:mm:ss S', normalize_whitespace=True)
+    >>> strelki.get('2013-05-05  T \n   12:30:45\t123456', 'YYYY-MM-DD T HH:mm:ss S', normalize_whitespace=True)
     <Arrow [2013-05-05T12:30:45.123456+00:00]>

@@ -1,6 +1,6 @@
 import pytest
 
-from arrow import arrow, locales
+from strelki import strelki, locales
 
 
 @pytest.mark.usefixtures("lang_locales")
@@ -55,19 +55,19 @@ class TestModule:
         mock_locale_cls.return_value = mock_locale
 
         with pytest.raises(ValueError):
-            arrow.locales.get_locale("locale-name")
+            strelki.locales.get_locale("locale-name")
 
-        cls_dict = arrow.locales._locale_map
+        cls_dict = strelki.locales._locale_map
         mocker.patch.dict(cls_dict, {"locale-name": mock_locale_cls})
 
-        result = arrow.locales.get_locale("locale_name")
+        result = strelki.locales.get_locale("locale_name")
         assert result == mock_locale
 
         # Capitalization and hyphenation should still yield the same locale
-        result = arrow.locales.get_locale("locale-name")
+        result = strelki.locales.get_locale("locale-name")
         assert result == mock_locale
 
-        result = arrow.locales.get_locale("locale-NAME")
+        result = strelki.locales.get_locale("locale-NAME")
         assert result == mock_locale
 
     def test_get_locale_by_class_name(self, mocker):
@@ -78,10 +78,10 @@ class TestModule:
         globals_fn.return_value = {"NonExistentLocale": mock_locale_cls}
 
         with pytest.raises(ValueError):
-            arrow.locales.get_locale_by_class_name("NonExistentLocale")
+            strelki.locales.get_locale_by_class_name("NonExistentLocale")
 
         mocker.patch.object(locales, "globals", globals_fn)
-        result = arrow.locales.get_locale_by_class_name("NonExistentLocale")
+        result = strelki.locales.get_locale_by_class_name("NonExistentLocale")
 
         mock_locale_cls.assert_called_once_with()
         assert result == mock_locale_obj
@@ -563,7 +563,7 @@ class TestMalteseLocale:
         assert self.locale._format_timeframe("years", 8) == "8 snin"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Is-Sibt"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "S"
 
@@ -1193,7 +1193,7 @@ class TestAzerbaijaniLocale:
 @pytest.mark.usefixtures("lang_locale")
 class TestMarathiLocale:
     def test_dateCoreFunctionality(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.month_name(dt.month) == "एप्रिल"
         assert self.locale.month_abbreviation(dt.month) == "एप्रि"
         assert self.locale.day_name(dt.isoweekday()) == "शनिवार"
@@ -1327,7 +1327,7 @@ class TestGeorgianLocale:
         assert self.locale._format_timeframe("years", 2) == "2 წლის"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "შაბათი"
 
 
@@ -1351,7 +1351,7 @@ class TestGermanLocale:
         assert self.locale.describe("year", only_distance=False) == "in einem Jahr"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Samstag"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "Sa"
 
@@ -1469,7 +1469,7 @@ class TestLaotianLocale:
         assert self.locale._format_timeframe("years", -20) == "20 ປີ"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "ວັນເສົາ"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "ວັນເສົາ"
 
@@ -1524,7 +1524,7 @@ class TestThaiLocale:
         assert self.locale._format_timeframe("years", 10) == "10 ปี"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 0)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 0)
         # These values depend on the actual Thai locale implementation
         # Replace with correct Thai names if available
         assert self.locale.day_name(dt.isoweekday()) == "วันเสาร์"
@@ -1643,7 +1643,7 @@ class TestFarsiLocale:
         assert self.locale._format_timeframe("years", 2) == "2 سال"
 
     def test_weekday(self):
-        fa = arrow.Arrow(2024, 10, 25, 17, 30, 00)
+        fa = strelki.Arrow(2024, 10, 25, 17, 30, 00)
         assert self.locale.day_name(fa.isoweekday()) == "جمعه"
         assert self.locale.day_abbreviation(fa.isoweekday()) == "جمعه"
         assert self.locale.month_name(fa.month) == "اکتبر"
@@ -1935,7 +1935,7 @@ class TestCroatianLocale:
         assert self.locale._format_timeframe("years", 12) == "12 godina"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "subota"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "su"
 
@@ -1982,7 +1982,7 @@ class TestSerbianLocale:
         assert self.locale._format_timeframe("years", 12) == "12 godina"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "subota"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "su"
 
@@ -2005,7 +2005,7 @@ class TestLatinLocale:
         assert self.locale._format_timeframe("years", 2) == "2 annos"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "dies Saturni"
 
 
@@ -2030,7 +2030,7 @@ class TestLithuanianLocale:
         assert self.locale._format_timeframe("years", 2) == "2 metų"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "šeštadienis"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "še"
 
@@ -2053,7 +2053,7 @@ class TestMalayLocale:
         assert self.locale._format_timeframe("years", 2) == "2 tahun"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Sabtu"
 
 
@@ -2075,7 +2075,7 @@ class TestSamiLocale:
         assert self.locale._format_timeframe("years", 2) == "2 jagi"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Lávvordat"
 
 
@@ -2128,7 +2128,7 @@ class TestZuluLocale:
         assert self.locale._format_timeframe("years", 2) == "2 eminyakeni"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "uMgqibelo"
 
 
@@ -2153,7 +2153,7 @@ class TestAlbanianLocale:
         assert self.locale._format_timeframe("years", -2) == "2 vjet"
 
     def test_weekday_and_month(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         # Saturday
         assert self.locale.day_name(dt.isoweekday()) == "e shtunë"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "sht"
@@ -2183,7 +2183,7 @@ class TestUrduLocale:
         assert self.locale._format_timeframe("years", -2) == "2 سال"
 
     def test_weekday_and_month(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         # Saturday
         assert self.locale.day_name(dt.isoweekday()) == "ہفتہ"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "ہفتہ"
@@ -2276,7 +2276,7 @@ class TestLatvianLocale:
         assert self.locale._format_timeframe("years", 12) == "12 gadiem"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "sestdiena"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "se"
 
@@ -2811,7 +2811,7 @@ class TestLuxembourgishLocale:
         assert self.locale.describe("year", only_distance=False) == "an engem Joer"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Samschdeg"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "Sam"
 
@@ -2855,7 +2855,7 @@ class TestTamilLocale:
         assert result == "ஒரு மணி நேரத்திற்கு முன்பு"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "சனிக்கிழமை"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "சனி"
 
@@ -2949,7 +2949,7 @@ class TestSinhalaLocale:
         assert result == "පැයකට පෙර"  # an hour ago
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "සෙනසුරාදා"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "අ"
 
@@ -3066,7 +3066,7 @@ class TestNorwegianLocale:
         assert result == "for en time siden"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "lørdag"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "lø"
 
@@ -3118,7 +3118,7 @@ class TestNewNorwegianLocale:
         assert result == "for ein time sidan"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "laurdag"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "la"
 
@@ -3170,7 +3170,7 @@ class TestDanishLocale:
         assert result == "for en time siden"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "lørdag"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "lør"
 
@@ -3244,7 +3244,7 @@ class TestAmharicLocale:
         assert result == "ከአንድ ሰዓት በፊት"  # an hour ago
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "ቅዳሜ"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "ዓ"
 
@@ -3303,7 +3303,7 @@ class TestArmenianLocale:
         assert self.locale._format_timeframe("years", 12) == "12 տարին"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "շաբաթ"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "շաբ."
 
@@ -3435,7 +3435,7 @@ class TestAfrikaansLocale:
         assert self.locale._format_timeframe("years", 5) == "5 jaar"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Saterdag"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "Za"
 
@@ -3452,7 +3452,7 @@ class TestAfrikaansLocale:
 @pytest.mark.usefixtures("lang_locale")
 class TestAlgeriaTunisiaArabicLocale:
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "السبت"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "سبت"
 
@@ -3469,7 +3469,7 @@ class TestAlgeriaTunisiaArabicLocale:
 @pytest.mark.usefixtures("lang_locale")
 class TestAustrianLocale:
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 1, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 1, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Sonntag"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "So"
 
@@ -3503,7 +3503,7 @@ class TestBasqueLocale:
         assert self.locale._format_timeframe("years", 5) == "5 urte"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "larunbata"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "lr"
 
@@ -3543,7 +3543,7 @@ class TestBelarusianLocale:
         assert self.locale._format_timeframe("years", 5) == "5 гадоў"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "субота"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "сб"
 
@@ -3560,7 +3560,7 @@ class TestBelarusianLocale:
 @pytest.mark.usefixtures("lang_locale")
 class TestLevantArabicLocale:
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.month_name(dt.month) == "نيسان"
         assert self.locale.month_abbreviation(dt.month) == "نيسان"
 
@@ -3568,7 +3568,7 @@ class TestLevantArabicLocale:
 @pytest.mark.usefixtures("lang_locale")
 class TestMauritaniaArabicLocale:
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.month_name(dt.month) == "إبريل"
         assert self.locale.month_abbreviation(dt.month) == "إبريل"
 
@@ -3576,7 +3576,7 @@ class TestMauritaniaArabicLocale:
 @pytest.mark.usefixtures("lang_locale")
 class TestMoroccoArabicLocale:
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.month_name(dt.month) == "أبريل"
         assert self.locale.month_abbreviation(dt.month) == "أبريل"
 
@@ -3607,7 +3607,7 @@ class TestRomanshLocale:
         assert self.locale._format_timeframe("years", 5) == "5 onns"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "sonda"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "so"
 
@@ -3647,7 +3647,7 @@ class TestSlovenianLocale:
         assert self.locale._format_timeframe("years", 5) == "5 let"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Sobota"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "Sob"
 
@@ -3687,7 +3687,7 @@ class TestUkrainianLocale:
         assert self.locale._format_timeframe("years", 5) == "5 років"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "субота"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "сб"
 
@@ -3730,7 +3730,7 @@ class TestVietnameseLocale:
         assert self.locale._format_timeframe("years", 5) == "5 năm"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "Thứ Bảy"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "Thứ 7"
 
@@ -3770,7 +3770,7 @@ class TestCatalanLocale:
         assert self.locale._format_timeframe("years", 5) == "5 anys"
 
     def test_weekday(self):
-        dt = arrow.Arrow(2015, 4, 11, 17, 30, 00)
+        dt = strelki.Arrow(2015, 4, 11, 17, 30, 00)
         assert self.locale.day_name(dt.isoweekday()) == "dissabte"
         assert self.locale.day_abbreviation(dt.isoweekday()) == "ds."
 

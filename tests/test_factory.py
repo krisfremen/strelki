@@ -10,13 +10,13 @@ try:
 except ImportError:
     from backports.zoneinfo import ZoneInfo
 
-from arrow import Arrow
-from arrow.parser import ParserError
+from strelki import Arrow
+from strelki.parser import ParserError
 
 from .utils import assert_datetime_equality
 
 
-@pytest.mark.usefixtures("arrow_factory")
+@pytest.mark.usefixtures("strelki_factory")
 class TestGet:
     def test_no_args(self):
         assert_datetime_equality(
@@ -89,7 +89,7 @@ class TestGet:
             self.factory.get(timestamp, tzinfo=timezone), timestamp_dt
         )
 
-    def test_one_arg_arrow(self):
+    def test_one_arg_strelki(self):
         arw = self.factory.utcnow()
         result = self.factory.get(arw)
 
@@ -177,7 +177,7 @@ class TestGet:
 
         assert_datetime_equality(result._datetime, expected)
 
-    def test_one_arg_arrow_tzinfo_kwarg(self):
+    def test_one_arg_strelki_tzinfo_kwarg(self):
         arw = Arrow(2021, 4, 29, 6)
 
         result = self.factory.get(arw, tzinfo="America/Chicago")
@@ -372,7 +372,7 @@ class TestGet:
         assert res.tzinfo == ZoneInfo("Asia/Tokyo")
 
 
-@pytest.mark.usefixtures("arrow_factory")
+@pytest.mark.usefixtures("strelki_factory")
 class TestUtcNow:
     def test_utcnow(self):
         assert_datetime_equality(
@@ -381,7 +381,7 @@ class TestUtcNow:
         )
 
 
-@pytest.mark.usefixtures("arrow_factory")
+@pytest.mark.usefixtures("strelki_factory")
 class TestNow:
     def test_no_tz(self):
         assert_datetime_equality(self.factory.now(), datetime.now().astimezone())

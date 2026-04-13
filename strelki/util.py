@@ -1,11 +1,11 @@
-"""Helpful functions used internally within arrow."""
+"""Helpful functions used internally within strelki."""
 
 import datetime
 from typing import Any, Optional
 
 from dateutil.rrule import WEEKLY, rrule
 
-from arrow.constants import (
+from strelki.constants import (
     MAX_ORDINAL,
     MAX_TIMESTAMP,
     MAX_TIMESTAMP_MS,

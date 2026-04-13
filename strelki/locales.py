@@ -1,4 +1,4 @@
-"""Provides internationalization for arrow in over 60 languages and dialects."""
+"""Provides internationalization for strelki in over 60 languages and dialects."""
 
 from math import trunc
 from typing import (
@@ -44,7 +44,7 @@ _locale_map: Dict[str, Type["Locale"]] = {}
 
 
 def get_locale(name: str) -> "Locale":
-    """Returns an appropriate :class:`Locale <arrow.locales.Locale>`
+    """Returns an appropriate :class:`Locale <strelki.locales.Locale>`
     corresponding to an input locale name.
 
     :param name: the name of the locale.
@@ -61,7 +61,7 @@ def get_locale(name: str) -> "Locale":
 
 
 def get_locale_by_class_name(name: str) -> "Locale":
-    """Returns an appropriate :class:`Locale <arrow.locales.Locale>`
+    """Returns an appropriate :class:`Locale <strelki.locales.Locale>`
     corresponding to an locale class name.
 
     :param name: the name of the locale class.

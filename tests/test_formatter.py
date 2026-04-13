@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 import pytest
 from dateutil import tz as dateutil_tz
 
-from arrow import (
+from strelki import (
     FORMAT_ATOM,
     FORMAT_COOKIE,
     FORMAT_RFC822,
@@ -25,7 +25,7 @@ from arrow import (
 from .utils import make_full_tz_list
 
 
-@pytest.mark.usefixtures("arrow_formatter")
+@pytest.mark.usefixtures("strelki_formatter")
 class TestFormatterFormatToken:
     def test_format(self):
         dt = datetime(2013, 2, 5, 12, 32, 51)
@@ -209,7 +209,7 @@ class TestFormatterFormatToken:
         assert self.formatter.format(datetime(1, 1, 1), "[[[ ]]") == "[[ ]"
 
 
-@pytest.mark.usefixtures("arrow_formatter", "time_1975_12_25")
+@pytest.mark.usefixtures("strelki_formatter", "time_1975_12_25")
 class TestFormatterBuiltinFormats:
     def test_atom(self):
         assert (

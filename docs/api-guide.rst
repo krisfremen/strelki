@@ -2,27 +2,27 @@
 API Guide
 ***************************************
 
-:mod:`arrow.arrow`
+:mod:`strelki.strelki`
 =====================
 
-.. automodule:: arrow.arrow
+.. automodule:: strelki.strelki
     :members:
 
-:mod:`arrow.factory`
+:mod:`strelki.factory`
 =====================
 
-.. automodule:: arrow.factory
+.. automodule:: strelki.factory
     :members:
 
-:mod:`arrow.api`
+:mod:`strelki.api`
 =====================
 
-.. automodule:: arrow.api
+.. automodule:: strelki.api
     :members:
 
-:mod:`arrow.locale`
+:mod:`strelki.locale`
 =====================
 
-.. automodule:: arrow.locales
+.. automodule:: strelki.locales
     :members:
     :undoc-members:

@@ -16,44 +16,44 @@ import simplejson as json
 from dateutil import tz
 from dateutil.relativedelta import FR, MO, SA, SU, TH, TU, WE
 
-from arrow import arrow, locales
+from strelki import strelki, locales
 
 from .utils import assert_datetime_equality
 
 
-class TestTestArrowInit:
+class TestTestStrelkiInit:
     def test_init_bad_input(self):
         with pytest.raises(TypeError):
-            arrow.Arrow(2013)
+            strelki.Arrow(2013)
 
         with pytest.raises(TypeError):
-            arrow.Arrow(2013, 2)
+            strelki.Arrow(2013, 2)
 
         with pytest.raises(ValueError):
-            arrow.Arrow(2013, 2, 2, 12, 30, 45, 9999999)
+            strelki.Arrow(2013, 2, 2, 12, 30, 45, 9999999)
 
     def test_init(self):
-        result = arrow.Arrow(2013, 2, 2)
+        result = strelki.Arrow(2013, 2, 2)
         self.expected = datetime(2013, 2, 2, tzinfo=tz.tzutc())
         assert result._datetime == self.expected
 
-        result = arrow.Arrow(2013, 2, 2, 12)
+        result = strelki.Arrow(2013, 2, 2, 12)
         self.expected = datetime(2013, 2, 2, 12, tzinfo=tz.tzutc())
         assert result._datetime == self.expected
 
-        result = arrow.Arrow(2013, 2, 2, 12, 30)
+        result = strelki.Arrow(2013, 2, 2, 12, 30)
         self.expected = datetime(2013, 2, 2, 12, 30, tzinfo=tz.tzutc())
         assert result._datetime == self.expected
 
-        result = arrow.Arrow(2013, 2, 2, 12, 30, 45)
+        result = strelki.Arrow(2013, 2, 2, 12, 30, 45)
         self.expected = datetime(2013, 2, 2, 12, 30, 45, tzinfo=tz.tzutc())
         assert result._datetime == self.expected
 
-        result = arrow.Arrow(2013, 2, 2, 12, 30, 45, 999999)
+        result = strelki.Arrow(2013, 2, 2, 12, 30, 45, 999999)
         self.expected = datetime(2013, 2, 2, 12, 30, 45, 999999, tzinfo=tz.tzutc())
         assert result._datetime == self.expected
 
-        result = arrow.Arrow(
+        result = strelki.Arrow(
             2013, 2, 2, 12, 30, 45, 999999, tzinfo=ZoneInfo("Europe/Paris")
         )
         self.expected = datetime(
@@ -63,7 +63,7 @@ class TestTestArrowInit:
 
     # regression tests for issue #626
     def test_init_pytz_timezone(self):
-        result = arrow.Arrow(
+        result = strelki.Arrow(
             2013, 2, 2, 12, 30, 45, 999999, tzinfo=pytz.timezone("Europe/Paris")
         )
         self.expected = datetime(
@@ -73,7 +73,7 @@ class TestTestArrowInit:
         assert_datetime_equality(result._datetime, self.expected, 1)
 
     def test_init_zoneinfo_timezone(self):
-        result = arrow.Arrow(
+        result = strelki.Arrow(
             2024, 7, 10, 18, 55, 45, 999999, tzinfo=ZoneInfo("Europe/Paris")
         )
         self.expected = datetime(
@@ -83,7 +83,7 @@ class TestTestArrowInit:
         assert_datetime_equality(result._datetime, self.expected, 1)
 
     def test_init_dateutil_timezone(self):
-        result = arrow.Arrow(
+        result = strelki.Arrow(
             2024, 7, 10, 18, 55, 45, 999999, tzinfo=tz.gettz("Europe/Paris")
         )
         self.expected = datetime(
@@ -93,8 +93,8 @@ class TestTestArrowInit:
         assert_datetime_equality(result._datetime, self.expected, 1)
 
     def test_init_with_fold(self):
-        before = arrow.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm")
-        after = arrow.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm", fold=1)
+        before = strelki.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm")
+        after = strelki.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm", fold=1)
 
         assert hasattr(before, "fold")
         assert hasattr(after, "fold")
@@ -104,14 +104,14 @@ class TestTestArrowInit:
         assert before.utcoffset() != after.utcoffset()
 
 
-class TestTestArrowFactory:
+class TestTestStrelkiFactory:
     def test_now(self):
-        result = arrow.Arrow.now()
+        result = strelki.Arrow.now()
 
         assert_datetime_equality(result._datetime, datetime.now().astimezone())
 
     def test_utcnow(self):
-        result = arrow.Arrow.utcnow()
+        result = strelki.Arrow.utcnow()
 
         assert_datetime_equality(
             result._datetime, datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
@@ -122,70 +122,70 @@ class TestTestArrowFactory:
     def test_fromtimestamp(self):
         timestamp = time.time()
 
-        result = arrow.Arrow.fromtimestamp(timestamp)
+        result = strelki.Arrow.fromtimestamp(timestamp)
         assert_datetime_equality(result._datetime, datetime.now().astimezone())
 
-        result = arrow.Arrow.fromtimestamp(timestamp, tzinfo=ZoneInfo("Europe/Paris"))
+        result = strelki.Arrow.fromtimestamp(timestamp, tzinfo=ZoneInfo("Europe/Paris"))
         assert_datetime_equality(
             result._datetime,
             datetime.fromtimestamp(timestamp, ZoneInfo("Europe/Paris")),
         )
 
-        result = arrow.Arrow.fromtimestamp(timestamp, tzinfo="Europe/Paris")
+        result = strelki.Arrow.fromtimestamp(timestamp, tzinfo="Europe/Paris")
         assert_datetime_equality(
             result._datetime,
             datetime.fromtimestamp(timestamp, ZoneInfo("Europe/Paris")),
         )
 
         with pytest.raises(ValueError):
-            arrow.Arrow.fromtimestamp("invalid timestamp")
+            strelki.Arrow.fromtimestamp("invalid timestamp")
 
     def test_utcfromtimestamp(self):
         timestamp = time.time()
 
-        result = arrow.Arrow.utcfromtimestamp(timestamp)
+        result = strelki.Arrow.utcfromtimestamp(timestamp)
         assert_datetime_equality(
             result._datetime, datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
         )
 
         with pytest.raises(ValueError):
-            arrow.Arrow.utcfromtimestamp("invalid timestamp")
+            strelki.Arrow.utcfromtimestamp("invalid timestamp")
 
     def test_fromdatetime(self):
         dt = datetime(2013, 2, 3, 12, 30, 45, 1)
 
-        result = arrow.Arrow.fromdatetime(dt)
+        result = strelki.Arrow.fromdatetime(dt)
 
         assert result._datetime == dt.replace(tzinfo=tz.tzutc())
 
     def test_fromdatetime_dt_tzinfo(self):
         dt = datetime(2013, 2, 3, 12, 30, 45, 1, tzinfo=ZoneInfo("US/Pacific"))
 
-        result = arrow.Arrow.fromdatetime(dt)
+        result = strelki.Arrow.fromdatetime(dt)
 
         assert result._datetime == dt.replace(tzinfo=ZoneInfo("US/Pacific"))
 
     def test_fromdatetime_tzinfo_arg(self):
         dt = datetime(2013, 2, 3, 12, 30, 45, 1)
 
-        result = arrow.Arrow.fromdatetime(dt, ZoneInfo("US/Pacific"))
+        result = strelki.Arrow.fromdatetime(dt, ZoneInfo("US/Pacific"))
 
         assert result._datetime == dt.replace(tzinfo=ZoneInfo("US/Pacific"))
 
     def test_fromdate(self):
         dt = date(2013, 2, 3)
 
-        result = arrow.Arrow.fromdate(dt, ZoneInfo("US/Pacific"))
+        result = strelki.Arrow.fromdate(dt, ZoneInfo("US/Pacific"))
 
         assert result._datetime == datetime(2013, 2, 3, tzinfo=ZoneInfo("US/Pacific"))
 
     def test_strptime(self):
         formatted = datetime(2013, 2, 3, 12, 30, 45).strftime("%Y-%m-%d %H:%M:%S")
 
-        result = arrow.Arrow.strptime(formatted, "%Y-%m-%d %H:%M:%S")
+        result = strelki.Arrow.strptime(formatted, "%Y-%m-%d %H:%M:%S")
         assert result._datetime == datetime(2013, 2, 3, 12, 30, 45, tzinfo=tz.tzutc())
 
-        result = arrow.Arrow.strptime(
+        result = strelki.Arrow.strptime(
             formatted, "%Y-%m-%d %H:%M:%S", tzinfo=ZoneInfo("Europe/Paris")
         )
         assert result._datetime == datetime(
@@ -195,113 +195,113 @@ class TestTestArrowFactory:
     def test_fromordinal(self):
         timestamp = 1607066909.937968
         with pytest.raises(TypeError):
-            arrow.Arrow.fromordinal(timestamp)
+            strelki.Arrow.fromordinal(timestamp)
         with pytest.raises(ValueError):
-            arrow.Arrow.fromordinal(int(timestamp))
+            strelki.Arrow.fromordinal(int(timestamp))
 
-        ordinal = arrow.Arrow.utcnow().toordinal()
+        ordinal = strelki.Arrow.utcnow().toordinal()
 
         with pytest.raises(TypeError):
-            arrow.Arrow.fromordinal(str(ordinal))
+            strelki.Arrow.fromordinal(str(ordinal))
 
-        result = arrow.Arrow.fromordinal(ordinal)
+        result = strelki.Arrow.fromordinal(ordinal)
         dt = datetime.fromordinal(ordinal)
 
         assert result.naive == dt
 
 
 @pytest.mark.usefixtures("time_2013_02_03")
-class TestTestArrowRepresentation:
+class TestTestStrelkiRepresentation:
     def test_repr(self):
-        result = self.arrow.__repr__()
+        result = self.strelki.__repr__()
 
-        assert result == f"<Arrow [{self.arrow._datetime.isoformat()}]>"
+        assert result == f"<Arrow [{self.strelki._datetime.isoformat()}]>"
 
     def test_str(self):
-        result = self.arrow.__str__()
+        result = self.strelki.__str__()
 
-        assert result == self.arrow._datetime.isoformat()
+        assert result == self.strelki._datetime.isoformat()
 
     def test_hash(self):
-        result = self.arrow.__hash__()
+        result = self.strelki.__hash__()
 
-        assert result == self.arrow._datetime.__hash__()
+        assert result == self.strelki._datetime.__hash__()
 
     def test_format(self):
-        result = f"{self.arrow:YYYY-MM-DD}"
+        result = f"{self.strelki:YYYY-MM-DD}"
 
         assert result == "2013-02-03"
 
     def test_bare_format(self):
-        result = self.arrow.format()
+        result = self.strelki.format()
 
         assert result == "2013-02-03 12:30:45+00:00"
 
     def test_format_no_format_string(self):
-        result = f"{self.arrow}"
+        result = f"{self.strelki}"
 
-        assert result == str(self.arrow)
+        assert result == str(self.strelki)
 
     def test_clone(self):
-        result = self.arrow.clone()
+        result = self.strelki.clone()
 
-        assert result is not self.arrow
-        assert result._datetime == self.arrow._datetime
+        assert result is not self.strelki
+        assert result._datetime == self.strelki._datetime
 
 
 @pytest.mark.usefixtures("time_2013_01_01")
-class TestArrowAttribute:
+class TestStrelkiAttribute:
     def test_getattr_base(self):
         with pytest.raises(AttributeError):
-            self.arrow.prop
+            self.strelki.prop
 
     def test_getattr_week(self):
-        assert self.arrow.week == 1
+        assert self.strelki.week == 1
 
     def test_getattr_quarter(self):
         # start dates
-        q1 = arrow.Arrow(2013, 1, 1)
-        q2 = arrow.Arrow(2013, 4, 1)
-        q3 = arrow.Arrow(2013, 8, 1)
-        q4 = arrow.Arrow(2013, 10, 1)
+        q1 = strelki.Arrow(2013, 1, 1)
+        q2 = strelki.Arrow(2013, 4, 1)
+        q3 = strelki.Arrow(2013, 8, 1)
+        q4 = strelki.Arrow(2013, 10, 1)
         assert q1.quarter == 1
         assert q2.quarter == 2
         assert q3.quarter == 3
         assert q4.quarter == 4
 
         # end dates
-        q1 = arrow.Arrow(2013, 3, 31)
-        q2 = arrow.Arrow(2013, 6, 30)
-        q3 = arrow.Arrow(2013, 9, 30)
-        q4 = arrow.Arrow(2013, 12, 31)
+        q1 = strelki.Arrow(2013, 3, 31)
+        q2 = strelki.Arrow(2013, 6, 30)
+        q3 = strelki.Arrow(2013, 9, 30)
+        q4 = strelki.Arrow(2013, 12, 31)
         assert q1.quarter == 1
         assert q2.quarter == 2
         assert q3.quarter == 3
         assert q4.quarter == 4
 
     def test_getattr_dt_value(self):
-        assert self.arrow.year == 2013
+        assert self.strelki.year == 2013
 
     def test_tzinfo(self):
-        assert self.arrow.tzinfo == timezone.utc
+        assert self.strelki.tzinfo == timezone.utc
 
     def test_naive(self):
-        assert self.arrow.naive == self.arrow._datetime.replace(tzinfo=None)
+        assert self.strelki.naive == self.strelki._datetime.replace(tzinfo=None)
 
     def test_timestamp(self):
-        assert self.arrow.timestamp() == self.arrow._datetime.timestamp()
+        assert self.strelki.timestamp() == self.strelki._datetime.timestamp()
 
     def test_int_timestamp(self):
-        assert self.arrow.int_timestamp == int(self.arrow._datetime.timestamp())
+        assert self.strelki.int_timestamp == int(self.strelki._datetime.timestamp())
 
     def test_float_timestamp(self):
-        assert self.arrow.float_timestamp == self.arrow._datetime.timestamp()
+        assert self.strelki.float_timestamp == self.strelki._datetime.timestamp()
 
     def test_getattr_fold(self):
         # UTC is always unambiguous
         assert self.now.fold == 0
 
-        ambiguous_dt = arrow.Arrow(
+        ambiguous_dt = strelki.Arrow(
             2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm", fold=1
         )
         assert ambiguous_dt.fold == 1
@@ -312,223 +312,223 @@ class TestArrowAttribute:
     def test_getattr_ambiguous(self):
         assert not self.now.ambiguous
 
-        ambiguous_dt = arrow.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm")
+        ambiguous_dt = strelki.Arrow(2017, 10, 29, 2, 0, tzinfo="Europe/Stockholm")
 
         assert ambiguous_dt.ambiguous
 
     def test_getattr_imaginary(self):
         assert not self.now.imaginary
 
-        imaginary_dt = arrow.Arrow(2013, 3, 31, 2, 30, tzinfo="Europe/Paris")
+        imaginary_dt = strelki.Arrow(2013, 3, 31, 2, 30, tzinfo="Europe/Paris")
 
         assert imaginary_dt.imaginary
 
 
 @pytest.mark.usefixtures("time_utcnow")
-class TestArrowComparison:
+class TestStrelkiComparison:
     def test_eq(self):
-        assert self.arrow == self.arrow
-        assert self.arrow == self.arrow.datetime
-        assert not (self.arrow == "abc")
+        assert self.strelki == self.strelki
+        assert self.strelki == self.strelki.datetime
+        assert not (self.strelki == "abc")
 
     def test_ne(self):
-        assert not (self.arrow != self.arrow)
-        assert not (self.arrow != self.arrow.datetime)
-        assert self.arrow != "abc"
+        assert not (self.strelki != self.strelki)
+        assert not (self.strelki != self.strelki.datetime)
+        assert self.strelki != "abc"
 
     def test_gt(self):
-        arrow_cmp = self.arrow.shift(minutes=1)
+        strelki_cmp = self.strelki.shift(minutes=1)
 
-        assert not (self.arrow > self.arrow)
-        assert not (self.arrow > self.arrow.datetime)
+        assert not (self.strelki > self.strelki)
+        assert not (self.strelki > self.strelki.datetime)
 
         with pytest.raises(TypeError):
-            self.arrow > "abc"  # noqa: B015
+            self.strelki > "abc"  # noqa: B015
 
-        assert self.arrow < arrow_cmp
-        assert self.arrow < arrow_cmp.datetime
+        assert self.strelki < strelki_cmp
+        assert self.strelki < strelki_cmp.datetime
 
     def test_ge(self):
         with pytest.raises(TypeError):
-            self.arrow >= "abc"  # noqa: B015
+            self.strelki >= "abc"  # noqa: B015
 
-        assert self.arrow >= self.arrow
-        assert self.arrow >= self.arrow.datetime
+        assert self.strelki >= self.strelki
+        assert self.strelki >= self.strelki.datetime
 
     def test_lt(self):
-        arrow_cmp = self.arrow.shift(minutes=1)
+        strelki_cmp = self.strelki.shift(minutes=1)
 
-        assert not (self.arrow < self.arrow)
-        assert not (self.arrow < self.arrow.datetime)
+        assert not (self.strelki < self.strelki)
+        assert not (self.strelki < self.strelki.datetime)
 
         with pytest.raises(TypeError):
-            self.arrow < "abc"  # noqa: B015
+            self.strelki < "abc"  # noqa: B015
 
-        assert self.arrow < arrow_cmp
-        assert self.arrow < arrow_cmp.datetime
+        assert self.strelki < strelki_cmp
+        assert self.strelki < strelki_cmp.datetime
 
     def test_le(self):
         with pytest.raises(TypeError):
-            self.arrow <= "abc"  # noqa: B015
+            self.strelki <= "abc"  # noqa: B015
 
-        assert self.arrow <= self.arrow
-        assert self.arrow <= self.arrow.datetime
+        assert self.strelki <= self.strelki
+        assert self.strelki <= self.strelki.datetime
 
 
 @pytest.mark.usefixtures("time_2013_01_01")
-class TestArrowMath:
+class TestStrelkiMath:
     def test_add_timedelta(self):
-        result = self.arrow.__add__(timedelta(days=1))
+        result = self.strelki.__add__(timedelta(days=1))
 
         assert result._datetime == datetime(2013, 1, 2, tzinfo=tz.tzutc())
 
     def test_add_other(self):
         with pytest.raises(TypeError):
-            self.arrow + 1
+            self.strelki + 1
 
     def test_radd(self):
-        result = self.arrow.__radd__(timedelta(days=1))
+        result = self.strelki.__radd__(timedelta(days=1))
 
         assert result._datetime == datetime(2013, 1, 2, tzinfo=tz.tzutc())
 
     def test_sub_timedelta(self):
-        result = self.arrow.__sub__(timedelta(days=1))
+        result = self.strelki.__sub__(timedelta(days=1))
 
         assert result._datetime == datetime(2012, 12, 31, tzinfo=tz.tzutc())
 
     def test_sub_datetime(self):
-        result = self.arrow.__sub__(datetime(2012, 12, 21, tzinfo=tz.tzutc()))
+        result = self.strelki.__sub__(datetime(2012, 12, 21, tzinfo=tz.tzutc()))
 
         assert result == timedelta(days=11)
 
-    def test_sub_arrow(self):
-        result = self.arrow.__sub__(arrow.Arrow(2012, 12, 21, tzinfo=tz.tzutc()))
+    def test_sub_strelki(self):
+        result = self.strelki.__sub__(strelki.Arrow(2012, 12, 21, tzinfo=tz.tzutc()))
 
         assert result == timedelta(days=11)
 
     def test_sub_other(self):
         with pytest.raises(TypeError):
-            self.arrow - object()
+            self.strelki - object()
 
     def test_rsub_datetime(self):
-        result = self.arrow.__rsub__(datetime(2012, 12, 21, tzinfo=tz.tzutc()))
+        result = self.strelki.__rsub__(datetime(2012, 12, 21, tzinfo=tz.tzutc()))
 
         assert result == timedelta(days=-11)
 
     def test_rsub_other(self):
         with pytest.raises(TypeError):
-            timedelta(days=1) - self.arrow
+            timedelta(days=1) - self.strelki
 
 
 @pytest.mark.usefixtures("time_utcnow")
-class TestArrowDatetimeInterface:
+class TestStrelkiDatetimeInterface:
     def test_date(self):
-        result = self.arrow.date()
+        result = self.strelki.date()
 
-        assert result == self.arrow._datetime.date()
+        assert result == self.strelki._datetime.date()
 
     def test_time(self):
-        result = self.arrow.time()
+        result = self.strelki.time()
 
-        assert result == self.arrow._datetime.time()
+        assert result == self.strelki._datetime.time()
 
     def test_timetz(self):
-        result = self.arrow.timetz()
+        result = self.strelki.timetz()
 
-        assert result == self.arrow._datetime.timetz()
+        assert result == self.strelki._datetime.timetz()
 
     def test_astimezone(self):
         other_tz = ZoneInfo("US/Pacific")
 
-        result = self.arrow.astimezone(other_tz)
+        result = self.strelki.astimezone(other_tz)
 
-        assert result == self.arrow._datetime.astimezone(other_tz)
+        assert result == self.strelki._datetime.astimezone(other_tz)
 
     def test_utcoffset(self):
-        result = self.arrow.utcoffset()
+        result = self.strelki.utcoffset()
 
-        assert result == self.arrow._datetime.utcoffset()
+        assert result == self.strelki._datetime.utcoffset()
 
     def test_dst(self):
-        result = self.arrow.dst()
+        result = self.strelki.dst()
 
-        assert result == self.arrow._datetime.dst()
+        assert result == self.strelki._datetime.dst()
 
     def test_timetuple(self):
-        result = self.arrow.timetuple()
+        result = self.strelki.timetuple()
 
-        assert result == self.arrow._datetime.timetuple()
+        assert result == self.strelki._datetime.timetuple()
 
     def test_utctimetuple(self):
-        result = self.arrow.utctimetuple()
+        result = self.strelki.utctimetuple()
 
-        assert result == self.arrow._datetime.utctimetuple()
+        assert result == self.strelki._datetime.utctimetuple()
 
     def test_toordinal(self):
-        result = self.arrow.toordinal()
+        result = self.strelki.toordinal()
 
-        assert result == self.arrow._datetime.toordinal()
+        assert result == self.strelki._datetime.toordinal()
 
     def test_weekday(self):
-        result = self.arrow.weekday()
+        result = self.strelki.weekday()
 
-        assert result == self.arrow._datetime.weekday()
+        assert result == self.strelki._datetime.weekday()
 
     def test_isoweekday(self):
-        result = self.arrow.isoweekday()
+        result = self.strelki.isoweekday()
 
-        assert result == self.arrow._datetime.isoweekday()
+        assert result == self.strelki._datetime.isoweekday()
 
     def test_isocalendar(self):
-        result = self.arrow.isocalendar()
+        result = self.strelki.isocalendar()
 
-        assert result == self.arrow._datetime.isocalendar()
+        assert result == self.strelki._datetime.isocalendar()
 
     def test_isoformat(self):
-        result = self.arrow.isoformat()
+        result = self.strelki.isoformat()
 
-        assert result == self.arrow._datetime.isoformat()
+        assert result == self.strelki._datetime.isoformat()
 
     def test_isoformat_timespec(self):
-        result = self.arrow.isoformat(timespec="hours")
-        assert result == self.arrow._datetime.isoformat(timespec="hours")
+        result = self.strelki.isoformat(timespec="hours")
+        assert result == self.strelki._datetime.isoformat(timespec="hours")
 
-        result = self.arrow.isoformat(timespec="microseconds")
-        assert result == self.arrow._datetime.isoformat()
+        result = self.strelki.isoformat(timespec="microseconds")
+        assert result == self.strelki._datetime.isoformat()
 
-        result = self.arrow.isoformat(timespec="milliseconds")
-        assert result == self.arrow._datetime.isoformat(timespec="milliseconds")
+        result = self.strelki.isoformat(timespec="milliseconds")
+        assert result == self.strelki._datetime.isoformat(timespec="milliseconds")
 
-        result = self.arrow.isoformat(sep="x", timespec="seconds")
-        assert result == self.arrow._datetime.isoformat(sep="x", timespec="seconds")
+        result = self.strelki.isoformat(sep="x", timespec="seconds")
+        assert result == self.strelki._datetime.isoformat(sep="x", timespec="seconds")
 
     def test_simplejson(self):
-        result = json.dumps({"v": self.arrow.for_json()}, for_json=True)
+        result = json.dumps({"v": self.strelki.for_json()}, for_json=True)
 
-        assert json.loads(result)["v"] == self.arrow._datetime.isoformat()
+        assert json.loads(result)["v"] == self.strelki._datetime.isoformat()
 
     def test_ctime(self):
-        result = self.arrow.ctime()
+        result = self.strelki.ctime()
 
-        assert result == self.arrow._datetime.ctime()
+        assert result == self.strelki._datetime.ctime()
 
     def test_strftime(self):
-        result = self.arrow.strftime("%Y")
+        result = self.strelki.strftime("%Y")
 
-        assert result == self.arrow._datetime.strftime("%Y")
+        assert result == self.strelki._datetime.strftime("%Y")
 
 
-class TestArrowFalsePositiveDst:
+class TestStrelkiFalsePositiveDst:
     """These tests relate to issues #376 and #551.
-    The key points in both issues are that arrow will assign a UTC timezone if none is provided and
+    The key points in both issues are that strelki will assign a UTC timezone if none is provided and
     .to() will change other attributes to be correct whereas .replace() only changes the specified attribute.
 
     Issue 376
-    >>> arrow.get('2016-11-06').to('America/New_York').ceil('day')
+    >>> strelki.get('2016-11-06').to('America/New_York').ceil('day')
     < Arrow [2016-11-05T23:59:59.999999-04:00] >
 
     Issue 551
-    >>> just_before = arrow.get('2018-11-04T01:59:59.999999')
+    >>> just_before = strelki.get('2018-11-04T01:59:59.999999')
     >>> just_before
     2018-11-04T01:59:59.999999+00:00
     >>> just_after = just_before.shift(microseconds=1)
@@ -543,20 +543,20 @@ class TestArrowFalsePositiveDst:
     """
 
     def test_dst(self):
-        self.before_1 = arrow.Arrow(
+        self.before_1 = strelki.Arrow(
             2016, 11, 6, 3, 59, tzinfo=ZoneInfo("America/New_York")
         )
-        self.before_2 = arrow.Arrow(2016, 11, 6, tzinfo=ZoneInfo("America/New_York"))
-        self.after_1 = arrow.Arrow(2016, 11, 6, 4, tzinfo=ZoneInfo("America/New_York"))
-        self.after_2 = arrow.Arrow(
+        self.before_2 = strelki.Arrow(2016, 11, 6, tzinfo=ZoneInfo("America/New_York"))
+        self.after_1 = strelki.Arrow(2016, 11, 6, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.after_2 = strelki.Arrow(
             2016, 11, 6, 23, 59, tzinfo=ZoneInfo("America/New_York")
         )
-        self.before_3 = arrow.Arrow(
+        self.before_3 = strelki.Arrow(
             2018, 11, 4, 3, 59, tzinfo=ZoneInfo("America/New_York")
         )
-        self.before_4 = arrow.Arrow(2018, 11, 4, tzinfo=ZoneInfo("America/New_York"))
-        self.after_3 = arrow.Arrow(2018, 11, 4, 4, tzinfo=ZoneInfo("America/New_York"))
-        self.after_4 = arrow.Arrow(
+        self.before_4 = strelki.Arrow(2018, 11, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.after_3 = strelki.Arrow(2018, 11, 4, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.after_4 = strelki.Arrow(
             2018, 11, 4, 23, 59, tzinfo=ZoneInfo("America/New_York")
         )
         assert self.before_1.day == self.before_2.day
@@ -565,54 +565,54 @@ class TestArrowFalsePositiveDst:
         assert self.after_3.day == self.after_4.day
 
 
-class TestArrowConversion:
+class TestStrelkiConversion:
     def test_to(self):
         dt_from = datetime.now()
-        arrow_from = arrow.Arrow.fromdatetime(dt_from, ZoneInfo("US/Pacific"))
+        strelki_from = strelki.Arrow.fromdatetime(dt_from, ZoneInfo("US/Pacific"))
 
         self.expected = dt_from.replace(tzinfo=ZoneInfo("US/Pacific")).astimezone(
             tz.tzutc()
         )
 
-        assert arrow_from.to("UTC").datetime == self.expected
-        assert arrow_from.to(tz.tzutc()).datetime == self.expected
+        assert strelki_from.to("UTC").datetime == self.expected
+        assert strelki_from.to(tz.tzutc()).datetime == self.expected
 
     # issue #368
     def test_to_pacific_then_utc(self):
-        result = arrow.Arrow(2018, 11, 4, 1, tzinfo="-08:00").to("US/Pacific").to("UTC")
-        assert result == arrow.Arrow(2018, 11, 4, 9)
+        result = strelki.Arrow(2018, 11, 4, 1, tzinfo="-08:00").to("US/Pacific").to("UTC")
+        assert result == strelki.Arrow(2018, 11, 4, 9)
 
     # issue #368
     def test_to_amsterdam_then_utc(self):
-        result = arrow.Arrow(2016, 10, 30).to("Europe/Amsterdam")
+        result = strelki.Arrow(2016, 10, 30).to("Europe/Amsterdam")
         assert result.utcoffset() == timedelta(seconds=7200)
 
     # regression test for #690
     def test_to_israel_same_offset(self):
-        result = arrow.Arrow(2019, 10, 27, 2, 21, 1, tzinfo="+03:00").to("Israel")
-        expected = arrow.Arrow(2019, 10, 27, 1, 21, 1, tzinfo="Israel")
+        result = strelki.Arrow(2019, 10, 27, 2, 21, 1, tzinfo="+03:00").to("Israel")
+        expected = strelki.Arrow(2019, 10, 27, 1, 21, 1, tzinfo="Israel")
 
         assert result == expected
         assert result.utcoffset() != expected.utcoffset()
 
     # issue 315
     def test_anchorage_dst(self):
-        before = arrow.Arrow(2016, 3, 13, 1, 59, tzinfo="America/Anchorage")
-        after = arrow.Arrow(2016, 3, 13, 3, 1, tzinfo="America/Anchorage")
+        before = strelki.Arrow(2016, 3, 13, 1, 59, tzinfo="America/Anchorage")
+        after = strelki.Arrow(2016, 3, 13, 3, 1, tzinfo="America/Anchorage")
 
         assert before.utcoffset() != after.utcoffset()
 
     # issue 476
     def test_chicago_fall(self):
-        result = arrow.Arrow(2017, 11, 5, 2, 1, tzinfo="-05:00").to("America/Chicago")
-        expected = arrow.Arrow(2017, 11, 5, 1, 1, tzinfo="America/Chicago")
+        result = strelki.Arrow(2017, 11, 5, 2, 1, tzinfo="-05:00").to("America/Chicago")
+        expected = strelki.Arrow(2017, 11, 5, 1, 1, tzinfo="America/Chicago")
 
         assert result == expected
         assert result.utcoffset() != expected.utcoffset()
 
     def test_toronto_gap(self):
-        before = arrow.Arrow(2011, 3, 13, 6, 30, tzinfo="UTC").to("America/Toronto")
-        after = arrow.Arrow(2011, 3, 13, 7, 30, tzinfo="UTC").to("America/Toronto")
+        before = strelki.Arrow(2011, 3, 13, 6, 30, tzinfo="UTC").to("America/Toronto")
+        after = strelki.Arrow(2011, 3, 13, 7, 30, tzinfo="UTC").to("America/Toronto")
 
         assert before.datetime.replace(tzinfo=None) == datetime(2011, 3, 13, 1, 30)
         assert after.datetime.replace(tzinfo=None) == datetime(2011, 3, 13, 3, 30)
@@ -620,8 +620,8 @@ class TestArrowConversion:
         assert before.utcoffset() != after.utcoffset()
 
     def test_sydney_gap(self):
-        before = arrow.Arrow(2012, 10, 6, 15, 30, tzinfo="UTC").to("Australia/Sydney")
-        after = arrow.Arrow(2012, 10, 6, 16, 30, tzinfo="UTC").to("Australia/Sydney")
+        before = strelki.Arrow(2012, 10, 6, 15, 30, tzinfo="UTC").to("Australia/Sydney")
+        after = strelki.Arrow(2012, 10, 6, 16, 30, tzinfo="UTC").to("Australia/Sydney")
 
         assert before.datetime.replace(tzinfo=None) == datetime(2012, 10, 7, 1, 30)
         assert after.datetime.replace(tzinfo=None) == datetime(2012, 10, 7, 3, 30)
@@ -629,9 +629,9 @@ class TestArrowConversion:
         assert before.utcoffset() != after.utcoffset()
 
 
-class TestArrowPickling:
+class TestStrelkiPickling:
     def test_pickle_and_unpickle(self):
-        dt = arrow.Arrow.utcnow()
+        dt = strelki.Arrow.utcnow()
 
         pickled = pickle.dumps(dt)
 
@@ -640,30 +640,30 @@ class TestArrowPickling:
         assert unpickled == dt
 
 
-class TestArrowReplace:
+class TestStrelkiReplace:
     def test_not_attr(self):
         with pytest.raises(ValueError):
-            arrow.Arrow.utcnow().replace(abc=1)
+            strelki.Arrow.utcnow().replace(abc=1)
 
     def test_replace(self):
-        arw = arrow.Arrow(2013, 5, 5, 12, 30, 45)
+        arw = strelki.Arrow(2013, 5, 5, 12, 30, 45)
 
-        assert arw.replace(year=2012) == arrow.Arrow(2012, 5, 5, 12, 30, 45)
-        assert arw.replace(month=1) == arrow.Arrow(2013, 1, 5, 12, 30, 45)
-        assert arw.replace(day=1) == arrow.Arrow(2013, 5, 1, 12, 30, 45)
-        assert arw.replace(hour=1) == arrow.Arrow(2013, 5, 5, 1, 30, 45)
-        assert arw.replace(minute=1) == arrow.Arrow(2013, 5, 5, 12, 1, 45)
-        assert arw.replace(second=1) == arrow.Arrow(2013, 5, 5, 12, 30, 1)
+        assert arw.replace(year=2012) == strelki.Arrow(2012, 5, 5, 12, 30, 45)
+        assert arw.replace(month=1) == strelki.Arrow(2013, 1, 5, 12, 30, 45)
+        assert arw.replace(day=1) == strelki.Arrow(2013, 5, 1, 12, 30, 45)
+        assert arw.replace(hour=1) == strelki.Arrow(2013, 5, 5, 1, 30, 45)
+        assert arw.replace(minute=1) == strelki.Arrow(2013, 5, 5, 12, 1, 45)
+        assert arw.replace(second=1) == strelki.Arrow(2013, 5, 5, 12, 30, 1)
 
     def test_replace_tzinfo(self):
-        arw = arrow.Arrow.utcnow().to("US/Eastern")
+        arw = strelki.Arrow.utcnow().to("US/Eastern")
 
         result = arw.replace(tzinfo=ZoneInfo("US/Pacific"))
 
         assert result == arw.datetime.replace(tzinfo=ZoneInfo("US/Pacific"))
 
     def test_replace_fold(self):
-        before = arrow.Arrow(2017, 11, 5, 1, tzinfo="America/New_York")
+        before = strelki.Arrow(2017, 11, 5, 1, tzinfo="America/New_York")
         after = before.replace(fold=1)
 
         assert before.fold == 0
@@ -672,34 +672,34 @@ class TestArrowReplace:
         assert before.utcoffset() != after.utcoffset()
 
     def test_replace_fold_and_other(self):
-        arw = arrow.Arrow(2013, 5, 5, 12, 30, 45)
+        arw = strelki.Arrow(2013, 5, 5, 12, 30, 45)
 
-        assert arw.replace(fold=1, minute=50) == arrow.Arrow(2013, 5, 5, 12, 50, 45)
-        assert arw.replace(minute=50, fold=1) == arrow.Arrow(2013, 5, 5, 12, 50, 45)
+        assert arw.replace(fold=1, minute=50) == strelki.Arrow(2013, 5, 5, 12, 50, 45)
+        assert arw.replace(minute=50, fold=1) == strelki.Arrow(2013, 5, 5, 12, 50, 45)
 
     def test_replace_week(self):
         with pytest.raises(ValueError):
-            arrow.Arrow.utcnow().replace(week=1)
+            strelki.Arrow.utcnow().replace(week=1)
 
     def test_replace_quarter(self):
         with pytest.raises(ValueError):
-            arrow.Arrow.utcnow().replace(quarter=1)
+            strelki.Arrow.utcnow().replace(quarter=1)
 
     def test_replace_quarter_and_fold(self):
         with pytest.raises(AttributeError):
-            arrow.utcnow().replace(fold=1, quarter=1)
+            strelki.utcnow().replace(fold=1, quarter=1)
 
         with pytest.raises(AttributeError):
-            arrow.utcnow().replace(quarter=1, fold=1)
+            strelki.utcnow().replace(quarter=1, fold=1)
 
     def test_replace_other_kwargs(self):
         with pytest.raises(AttributeError):
-            arrow.utcnow().replace(abc="def")
+            strelki.utcnow().replace(abc="def")
 
 
-class TestArrowShift:
+class TestStrelkiShift:
     def test_not_attr(self):
-        now = arrow.Arrow.utcnow()
+        now = strelki.Arrow.utcnow()
 
         with pytest.raises(ValueError):
             now.shift(abc=1)
@@ -708,74 +708,74 @@ class TestArrowShift:
             now.shift(week=1)
 
     def test_shift(self):
-        arw = arrow.Arrow(2013, 5, 5, 12, 30, 45)
+        arw = strelki.Arrow(2013, 5, 5, 12, 30, 45)
 
-        assert arw.shift(years=1) == arrow.Arrow(2014, 5, 5, 12, 30, 45)
-        assert arw.shift(quarters=1) == arrow.Arrow(2013, 8, 5, 12, 30, 45)
-        assert arw.shift(quarters=1, months=1) == arrow.Arrow(2013, 9, 5, 12, 30, 45)
-        assert arw.shift(months=1) == arrow.Arrow(2013, 6, 5, 12, 30, 45)
-        assert arw.shift(weeks=1) == arrow.Arrow(2013, 5, 12, 12, 30, 45)
-        assert arw.shift(days=1) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
-        assert arw.shift(hours=1) == arrow.Arrow(2013, 5, 5, 13, 30, 45)
-        assert arw.shift(minutes=1) == arrow.Arrow(2013, 5, 5, 12, 31, 45)
-        assert arw.shift(seconds=1) == arrow.Arrow(2013, 5, 5, 12, 30, 46)
-        assert arw.shift(microseconds=1) == arrow.Arrow(2013, 5, 5, 12, 30, 45, 1)
+        assert arw.shift(years=1) == strelki.Arrow(2014, 5, 5, 12, 30, 45)
+        assert arw.shift(quarters=1) == strelki.Arrow(2013, 8, 5, 12, 30, 45)
+        assert arw.shift(quarters=1, months=1) == strelki.Arrow(2013, 9, 5, 12, 30, 45)
+        assert arw.shift(months=1) == strelki.Arrow(2013, 6, 5, 12, 30, 45)
+        assert arw.shift(weeks=1) == strelki.Arrow(2013, 5, 12, 12, 30, 45)
+        assert arw.shift(days=1) == strelki.Arrow(2013, 5, 6, 12, 30, 45)
+        assert arw.shift(hours=1) == strelki.Arrow(2013, 5, 5, 13, 30, 45)
+        assert arw.shift(minutes=1) == strelki.Arrow(2013, 5, 5, 12, 31, 45)
+        assert arw.shift(seconds=1) == strelki.Arrow(2013, 5, 5, 12, 30, 46)
+        assert arw.shift(microseconds=1) == strelki.Arrow(2013, 5, 5, 12, 30, 45, 1)
 
         # Remember: Python's weekday 0 is Monday
-        assert arw.shift(weekday=0) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
-        assert arw.shift(weekday=1) == arrow.Arrow(2013, 5, 7, 12, 30, 45)
-        assert arw.shift(weekday=2) == arrow.Arrow(2013, 5, 8, 12, 30, 45)
-        assert arw.shift(weekday=3) == arrow.Arrow(2013, 5, 9, 12, 30, 45)
-        assert arw.shift(weekday=4) == arrow.Arrow(2013, 5, 10, 12, 30, 45)
-        assert arw.shift(weekday=5) == arrow.Arrow(2013, 5, 11, 12, 30, 45)
+        assert arw.shift(weekday=0) == strelki.Arrow(2013, 5, 6, 12, 30, 45)
+        assert arw.shift(weekday=1) == strelki.Arrow(2013, 5, 7, 12, 30, 45)
+        assert arw.shift(weekday=2) == strelki.Arrow(2013, 5, 8, 12, 30, 45)
+        assert arw.shift(weekday=3) == strelki.Arrow(2013, 5, 9, 12, 30, 45)
+        assert arw.shift(weekday=4) == strelki.Arrow(2013, 5, 10, 12, 30, 45)
+        assert arw.shift(weekday=5) == strelki.Arrow(2013, 5, 11, 12, 30, 45)
         assert arw.shift(weekday=6) == arw
 
         with pytest.raises(IndexError):
             arw.shift(weekday=7)
 
         # Use dateutil.relativedelta's convenient day instances
-        assert arw.shift(weekday=MO) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
-        assert arw.shift(weekday=MO(0)) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
-        assert arw.shift(weekday=MO(1)) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
-        assert arw.shift(weekday=MO(2)) == arrow.Arrow(2013, 5, 13, 12, 30, 45)
-        assert arw.shift(weekday=TU) == arrow.Arrow(2013, 5, 7, 12, 30, 45)
-        assert arw.shift(weekday=TU(0)) == arrow.Arrow(2013, 5, 7, 12, 30, 45)
-        assert arw.shift(weekday=TU(1)) == arrow.Arrow(2013, 5, 7, 12, 30, 45)
-        assert arw.shift(weekday=TU(2)) == arrow.Arrow(2013, 5, 14, 12, 30, 45)
-        assert arw.shift(weekday=WE) == arrow.Arrow(2013, 5, 8, 12, 30, 45)
-        assert arw.shift(weekday=WE(0)) == arrow.Arrow(2013, 5, 8, 12, 30, 45)
-        assert arw.shift(weekday=WE(1)) == arrow.Arrow(2013, 5, 8, 12, 30, 45)
-        assert arw.shift(weekday=WE(2)) == arrow.Arrow(2013, 5, 15, 12, 30, 45)
-        assert arw.shift(weekday=TH) == arrow.Arrow(2013, 5, 9, 12, 30, 45)
-        assert arw.shift(weekday=TH(0)) == arrow.Arrow(2013, 5, 9, 12, 30, 45)
-        assert arw.shift(weekday=TH(1)) == arrow.Arrow(2013, 5, 9, 12, 30, 45)
-        assert arw.shift(weekday=TH(2)) == arrow.Arrow(2013, 5, 16, 12, 30, 45)
-        assert arw.shift(weekday=FR) == arrow.Arrow(2013, 5, 10, 12, 30, 45)
-        assert arw.shift(weekday=FR(0)) == arrow.Arrow(2013, 5, 10, 12, 30, 45)
-        assert arw.shift(weekday=FR(1)) == arrow.Arrow(2013, 5, 10, 12, 30, 45)
-        assert arw.shift(weekday=FR(2)) == arrow.Arrow(2013, 5, 17, 12, 30, 45)
-        assert arw.shift(weekday=SA) == arrow.Arrow(2013, 5, 11, 12, 30, 45)
-        assert arw.shift(weekday=SA(0)) == arrow.Arrow(2013, 5, 11, 12, 30, 45)
-        assert arw.shift(weekday=SA(1)) == arrow.Arrow(2013, 5, 11, 12, 30, 45)
-        assert arw.shift(weekday=SA(2)) == arrow.Arrow(2013, 5, 18, 12, 30, 45)
+        assert arw.shift(weekday=MO) == strelki.Arrow(2013, 5, 6, 12, 30, 45)
+        assert arw.shift(weekday=MO(0)) == strelki.Arrow(2013, 5, 6, 12, 30, 45)
+        assert arw.shift(weekday=MO(1)) == strelki.Arrow(2013, 5, 6, 12, 30, 45)
+        assert arw.shift(weekday=MO(2)) == strelki.Arrow(2013, 5, 13, 12, 30, 45)
+        assert arw.shift(weekday=TU) == strelki.Arrow(2013, 5, 7, 12, 30, 45)
+        assert arw.shift(weekday=TU(0)) == strelki.Arrow(2013, 5, 7, 12, 30, 45)
+        assert arw.shift(weekday=TU(1)) == strelki.Arrow(2013, 5, 7, 12, 30, 45)
+        assert arw.shift(weekday=TU(2)) == strelki.Arrow(2013, 5, 14, 12, 30, 45)
+        assert arw.shift(weekday=WE) == strelki.Arrow(2013, 5, 8, 12, 30, 45)
+        assert arw.shift(weekday=WE(0)) == strelki.Arrow(2013, 5, 8, 12, 30, 45)
+        assert arw.shift(weekday=WE(1)) == strelki.Arrow(2013, 5, 8, 12, 30, 45)
+        assert arw.shift(weekday=WE(2)) == strelki.Arrow(2013, 5, 15, 12, 30, 45)
+        assert arw.shift(weekday=TH) == strelki.Arrow(2013, 5, 9, 12, 30, 45)
+        assert arw.shift(weekday=TH(0)) == strelki.Arrow(2013, 5, 9, 12, 30, 45)
+        assert arw.shift(weekday=TH(1)) == strelki.Arrow(2013, 5, 9, 12, 30, 45)
+        assert arw.shift(weekday=TH(2)) == strelki.Arrow(2013, 5, 16, 12, 30, 45)
+        assert arw.shift(weekday=FR) == strelki.Arrow(2013, 5, 10, 12, 30, 45)
+        assert arw.shift(weekday=FR(0)) == strelki.Arrow(2013, 5, 10, 12, 30, 45)
+        assert arw.shift(weekday=FR(1)) == strelki.Arrow(2013, 5, 10, 12, 30, 45)
+        assert arw.shift(weekday=FR(2)) == strelki.Arrow(2013, 5, 17, 12, 30, 45)
+        assert arw.shift(weekday=SA) == strelki.Arrow(2013, 5, 11, 12, 30, 45)
+        assert arw.shift(weekday=SA(0)) == strelki.Arrow(2013, 5, 11, 12, 30, 45)
+        assert arw.shift(weekday=SA(1)) == strelki.Arrow(2013, 5, 11, 12, 30, 45)
+        assert arw.shift(weekday=SA(2)) == strelki.Arrow(2013, 5, 18, 12, 30, 45)
         assert arw.shift(weekday=SU) == arw
         assert arw.shift(weekday=SU(0)) == arw
         assert arw.shift(weekday=SU(1)) == arw
-        assert arw.shift(weekday=SU(2)) == arrow.Arrow(2013, 5, 12, 12, 30, 45)
+        assert arw.shift(weekday=SU(2)) == strelki.Arrow(2013, 5, 12, 12, 30, 45)
 
     def test_shift_negative(self):
-        arw = arrow.Arrow(2013, 5, 5, 12, 30, 45)
+        arw = strelki.Arrow(2013, 5, 5, 12, 30, 45)
 
-        assert arw.shift(years=-1) == arrow.Arrow(2012, 5, 5, 12, 30, 45)
-        assert arw.shift(quarters=-1) == arrow.Arrow(2013, 2, 5, 12, 30, 45)
-        assert arw.shift(quarters=-1, months=-1) == arrow.Arrow(2013, 1, 5, 12, 30, 45)
-        assert arw.shift(months=-1) == arrow.Arrow(2013, 4, 5, 12, 30, 45)
-        assert arw.shift(weeks=-1) == arrow.Arrow(2013, 4, 28, 12, 30, 45)
-        assert arw.shift(days=-1) == arrow.Arrow(2013, 5, 4, 12, 30, 45)
-        assert arw.shift(hours=-1) == arrow.Arrow(2013, 5, 5, 11, 30, 45)
-        assert arw.shift(minutes=-1) == arrow.Arrow(2013, 5, 5, 12, 29, 45)
-        assert arw.shift(seconds=-1) == arrow.Arrow(2013, 5, 5, 12, 30, 44)
-        assert arw.shift(microseconds=-1) == arrow.Arrow(2013, 5, 5, 12, 30, 44, 999999)
+        assert arw.shift(years=-1) == strelki.Arrow(2012, 5, 5, 12, 30, 45)
+        assert arw.shift(quarters=-1) == strelki.Arrow(2013, 2, 5, 12, 30, 45)
+        assert arw.shift(quarters=-1, months=-1) == strelki.Arrow(2013, 1, 5, 12, 30, 45)
+        assert arw.shift(months=-1) == strelki.Arrow(2013, 4, 5, 12, 30, 45)
+        assert arw.shift(weeks=-1) == strelki.Arrow(2013, 4, 28, 12, 30, 45)
+        assert arw.shift(days=-1) == strelki.Arrow(2013, 5, 4, 12, 30, 45)
+        assert arw.shift(hours=-1) == strelki.Arrow(2013, 5, 5, 11, 30, 45)
+        assert arw.shift(minutes=-1) == strelki.Arrow(2013, 5, 5, 12, 29, 45)
+        assert arw.shift(seconds=-1) == strelki.Arrow(2013, 5, 5, 12, 30, 44)
+        assert arw.shift(microseconds=-1) == strelki.Arrow(2013, 5, 5, 12, 30, 44, 999999)
 
         # Not sure how practical these negative weekdays are
         assert arw.shift(weekday=-1) == arw.shift(weekday=SU)
@@ -789,92 +789,92 @@ class TestArrowShift:
         with pytest.raises(IndexError):
             arw.shift(weekday=-8)
 
-        assert arw.shift(weekday=MO(-1)) == arrow.Arrow(2013, 4, 29, 12, 30, 45)
-        assert arw.shift(weekday=TU(-1)) == arrow.Arrow(2013, 4, 30, 12, 30, 45)
-        assert arw.shift(weekday=WE(-1)) == arrow.Arrow(2013, 5, 1, 12, 30, 45)
-        assert arw.shift(weekday=TH(-1)) == arrow.Arrow(2013, 5, 2, 12, 30, 45)
-        assert arw.shift(weekday=FR(-1)) == arrow.Arrow(2013, 5, 3, 12, 30, 45)
-        assert arw.shift(weekday=SA(-1)) == arrow.Arrow(2013, 5, 4, 12, 30, 45)
+        assert arw.shift(weekday=MO(-1)) == strelki.Arrow(2013, 4, 29, 12, 30, 45)
+        assert arw.shift(weekday=TU(-1)) == strelki.Arrow(2013, 4, 30, 12, 30, 45)
+        assert arw.shift(weekday=WE(-1)) == strelki.Arrow(2013, 5, 1, 12, 30, 45)
+        assert arw.shift(weekday=TH(-1)) == strelki.Arrow(2013, 5, 2, 12, 30, 45)
+        assert arw.shift(weekday=FR(-1)) == strelki.Arrow(2013, 5, 3, 12, 30, 45)
+        assert arw.shift(weekday=SA(-1)) == strelki.Arrow(2013, 5, 4, 12, 30, 45)
         assert arw.shift(weekday=SU(-1)) == arw
-        assert arw.shift(weekday=SU(-2)) == arrow.Arrow(2013, 4, 28, 12, 30, 45)
+        assert arw.shift(weekday=SU(-2)) == strelki.Arrow(2013, 4, 28, 12, 30, 45)
 
     def test_shift_quarters_bug(self):
-        arw = arrow.Arrow(2013, 5, 5, 12, 30, 45)
+        arw = strelki.Arrow(2013, 5, 5, 12, 30, 45)
 
         # The value of the last-read argument was used instead of the ``quarters`` argument.
         # Recall that the keyword argument dict, like all dicts, is unordered, so only certain
         # combinations of arguments would exhibit this.
-        assert arw.shift(quarters=0, years=1) == arrow.Arrow(2014, 5, 5, 12, 30, 45)
-        assert arw.shift(quarters=0, months=1) == arrow.Arrow(2013, 6, 5, 12, 30, 45)
-        assert arw.shift(quarters=0, weeks=1) == arrow.Arrow(2013, 5, 12, 12, 30, 45)
-        assert arw.shift(quarters=0, days=1) == arrow.Arrow(2013, 5, 6, 12, 30, 45)
-        assert arw.shift(quarters=0, hours=1) == arrow.Arrow(2013, 5, 5, 13, 30, 45)
-        assert arw.shift(quarters=0, minutes=1) == arrow.Arrow(2013, 5, 5, 12, 31, 45)
-        assert arw.shift(quarters=0, seconds=1) == arrow.Arrow(2013, 5, 5, 12, 30, 46)
-        assert arw.shift(quarters=0, microseconds=1) == arrow.Arrow(
+        assert arw.shift(quarters=0, years=1) == strelki.Arrow(2014, 5, 5, 12, 30, 45)
+        assert arw.shift(quarters=0, months=1) == strelki.Arrow(2013, 6, 5, 12, 30, 45)
+        assert arw.shift(quarters=0, weeks=1) == strelki.Arrow(2013, 5, 12, 12, 30, 45)
+        assert arw.shift(quarters=0, days=1) == strelki.Arrow(2013, 5, 6, 12, 30, 45)
+        assert arw.shift(quarters=0, hours=1) == strelki.Arrow(2013, 5, 5, 13, 30, 45)
+        assert arw.shift(quarters=0, minutes=1) == strelki.Arrow(2013, 5, 5, 12, 31, 45)
+        assert arw.shift(quarters=0, seconds=1) == strelki.Arrow(2013, 5, 5, 12, 30, 46)
+        assert arw.shift(quarters=0, microseconds=1) == strelki.Arrow(
             2013, 5, 5, 12, 30, 45, 1
         )
 
     def test_shift_positive_imaginary(self):
         # Avoid shifting into imaginary datetimes, take into account DST and other timezone changes.
 
-        new_york = arrow.Arrow(2017, 3, 12, 1, 30, tzinfo="America/New_York")
-        assert new_york.shift(hours=+1) == arrow.Arrow(
+        new_york = strelki.Arrow(2017, 3, 12, 1, 30, tzinfo="America/New_York")
+        assert new_york.shift(hours=+1) == strelki.Arrow(
             2017, 3, 12, 3, 30, tzinfo="America/New_York"
         )
 
         # pendulum example
-        paris = arrow.Arrow(2013, 3, 31, 1, 50, tzinfo="Europe/Paris")
-        assert paris.shift(minutes=+20) == arrow.Arrow(
+        paris = strelki.Arrow(2013, 3, 31, 1, 50, tzinfo="Europe/Paris")
+        assert paris.shift(minutes=+20) == strelki.Arrow(
             2013, 3, 31, 3, 10, tzinfo="Europe/Paris"
         )
 
-        canberra = arrow.Arrow(2018, 10, 7, 1, 30, tzinfo="Australia/Canberra")
-        assert canberra.shift(hours=+1) == arrow.Arrow(
+        canberra = strelki.Arrow(2018, 10, 7, 1, 30, tzinfo="Australia/Canberra")
+        assert canberra.shift(hours=+1) == strelki.Arrow(
             2018, 10, 7, 3, 30, tzinfo="Australia/Canberra"
         )
 
-        kiev = arrow.Arrow(2018, 3, 25, 2, 30, tzinfo="Europe/Kiev")
-        assert kiev.shift(hours=+1) == arrow.Arrow(
+        kiev = strelki.Arrow(2018, 3, 25, 2, 30, tzinfo="Europe/Kiev")
+        assert kiev.shift(hours=+1) == strelki.Arrow(
             2018, 3, 25, 4, 30, tzinfo="Europe/Kiev"
         )
 
         # Edge case, the entire day of 2011-12-30 is imaginary in this zone!
-        apia = arrow.Arrow(2011, 12, 29, 23, tzinfo="Pacific/Apia")
-        assert apia.shift(hours=+2) == arrow.Arrow(
+        apia = strelki.Arrow(2011, 12, 29, 23, tzinfo="Pacific/Apia")
+        assert apia.shift(hours=+2) == strelki.Arrow(
             2011, 12, 31, 1, tzinfo="Pacific/Apia"
         )
 
     def test_shift_negative_imaginary(self):
-        new_york = arrow.Arrow(2011, 3, 13, 3, 30, tzinfo="America/New_York")
-        assert new_york.shift(hours=-1) == arrow.Arrow(
+        new_york = strelki.Arrow(2011, 3, 13, 3, 30, tzinfo="America/New_York")
+        assert new_york.shift(hours=-1) == strelki.Arrow(
             2011, 3, 13, 3, 30, tzinfo="America/New_York"
         )
-        assert new_york.shift(hours=-2) == arrow.Arrow(
+        assert new_york.shift(hours=-2) == strelki.Arrow(
             2011, 3, 13, 1, 30, tzinfo="America/New_York"
         )
 
-        london = arrow.Arrow(2019, 3, 31, 2, tzinfo="Europe/London")
-        assert london.shift(hours=-1) == arrow.Arrow(
+        london = strelki.Arrow(2019, 3, 31, 2, tzinfo="Europe/London")
+        assert london.shift(hours=-1) == strelki.Arrow(
             2019, 3, 31, 2, tzinfo="Europe/London"
         )
-        assert london.shift(hours=-2) == arrow.Arrow(
+        assert london.shift(hours=-2) == strelki.Arrow(
             2019, 3, 31, 0, tzinfo="Europe/London"
         )
 
         # edge case, crossing the international dateline
-        apia = arrow.Arrow(2011, 12, 31, 1, tzinfo="Pacific/Apia")
-        assert apia.shift(hours=-2) == arrow.Arrow(
+        apia = strelki.Arrow(2011, 12, 31, 1, tzinfo="Pacific/Apia")
+        assert apia.shift(hours=-2) == strelki.Arrow(
             2011, 12, 31, 23, tzinfo="Pacific/Apia"
         )
 
     def test_shift_with_imaginary_check(self):
-        dt = arrow.Arrow(2024, 3, 10, 2, 30, tzinfo=ZoneInfo("US/Eastern"))
+        dt = strelki.Arrow(2024, 3, 10, 2, 30, tzinfo=ZoneInfo("US/Eastern"))
         shifted = dt.shift(hours=1)
         assert shifted.datetime.hour == 3
 
     def test_shift_without_imaginary_check(self):
-        dt = arrow.Arrow(2024, 3, 10, 2, 30, tzinfo=ZoneInfo("US/Eastern"))
+        dt = strelki.Arrow(2024, 3, 10, 2, 30, tzinfo=ZoneInfo("US/Eastern"))
         shifted = dt.shift(hours=1, check_imaginary=False)
         assert shifted.datetime.hour == 3
 
@@ -884,157 +884,157 @@ class TestArrowShift:
     def test_shift_kiritimati(self):
         # corrected 2018d tz database release, will fail in earlier versions
 
-        kiritimati = arrow.Arrow(1994, 12, 30, 12, 30, tzinfo="Pacific/Kiritimati")
-        assert kiritimati.shift(days=+1) == arrow.Arrow(
+        kiritimati = strelki.Arrow(1994, 12, 30, 12, 30, tzinfo="Pacific/Kiritimati")
+        assert kiritimati.shift(days=+1) == strelki.Arrow(
             1995, 1, 1, 12, 30, tzinfo="Pacific/Kiritimati"
         )
 
     def shift_imaginary_seconds(self):
         # offset has a seconds component
-        monrovia = arrow.Arrow(1972, 1, 6, 23, tzinfo="Africa/Monrovia")
-        assert monrovia.shift(hours=+1, minutes=+30) == arrow.Arrow(
+        monrovia = strelki.Arrow(1972, 1, 6, 23, tzinfo="Africa/Monrovia")
+        assert monrovia.shift(hours=+1, minutes=+30) == strelki.Arrow(
             1972, 1, 7, 1, 14, 30, tzinfo="Africa/Monrovia"
         )
 
 
-class TestArrowRange:
+class TestStrelkiRange:
     def test_year(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "year", datetime(2013, 1, 2, 3, 4, 5), datetime(2016, 4, 5, 6, 7, 8)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 1, 2, 3, 4, 5),
-            arrow.Arrow(2014, 1, 2, 3, 4, 5),
-            arrow.Arrow(2015, 1, 2, 3, 4, 5),
-            arrow.Arrow(2016, 1, 2, 3, 4, 5),
+            strelki.Arrow(2013, 1, 2, 3, 4, 5),
+            strelki.Arrow(2014, 1, 2, 3, 4, 5),
+            strelki.Arrow(2015, 1, 2, 3, 4, 5),
+            strelki.Arrow(2016, 1, 2, 3, 4, 5),
         ]
 
     def test_quarter(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "quarter", datetime(2013, 2, 3, 4, 5, 6), datetime(2013, 5, 6, 7, 8, 9)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 2, 3, 4, 5, 6),
-            arrow.Arrow(2013, 5, 3, 4, 5, 6),
+            strelki.Arrow(2013, 2, 3, 4, 5, 6),
+            strelki.Arrow(2013, 5, 3, 4, 5, 6),
         ]
 
     def test_month(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "month", datetime(2013, 2, 3, 4, 5, 6), datetime(2013, 5, 6, 7, 8, 9)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 2, 3, 4, 5, 6),
-            arrow.Arrow(2013, 3, 3, 4, 5, 6),
-            arrow.Arrow(2013, 4, 3, 4, 5, 6),
-            arrow.Arrow(2013, 5, 3, 4, 5, 6),
+            strelki.Arrow(2013, 2, 3, 4, 5, 6),
+            strelki.Arrow(2013, 3, 3, 4, 5, 6),
+            strelki.Arrow(2013, 4, 3, 4, 5, 6),
+            strelki.Arrow(2013, 5, 3, 4, 5, 6),
         ]
 
     def test_week(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "week", datetime(2013, 9, 1, 2, 3, 4), datetime(2013, 10, 1, 2, 3, 4)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 9, 1, 2, 3, 4),
-            arrow.Arrow(2013, 9, 8, 2, 3, 4),
-            arrow.Arrow(2013, 9, 15, 2, 3, 4),
-            arrow.Arrow(2013, 9, 22, 2, 3, 4),
-            arrow.Arrow(2013, 9, 29, 2, 3, 4),
+            strelki.Arrow(2013, 9, 1, 2, 3, 4),
+            strelki.Arrow(2013, 9, 8, 2, 3, 4),
+            strelki.Arrow(2013, 9, 15, 2, 3, 4),
+            strelki.Arrow(2013, 9, 22, 2, 3, 4),
+            strelki.Arrow(2013, 9, 29, 2, 3, 4),
         ]
 
     def test_day(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "day", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 5, 6, 7, 8)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 1, 2, 3, 4, 5),
-            arrow.Arrow(2013, 1, 3, 3, 4, 5),
-            arrow.Arrow(2013, 1, 4, 3, 4, 5),
-            arrow.Arrow(2013, 1, 5, 3, 4, 5),
+            strelki.Arrow(2013, 1, 2, 3, 4, 5),
+            strelki.Arrow(2013, 1, 3, 3, 4, 5),
+            strelki.Arrow(2013, 1, 4, 3, 4, 5),
+            strelki.Arrow(2013, 1, 5, 3, 4, 5),
         ]
 
     def test_hour(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "hour", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 6, 7, 8)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 1, 2, 3, 4, 5),
-            arrow.Arrow(2013, 1, 2, 4, 4, 5),
-            arrow.Arrow(2013, 1, 2, 5, 4, 5),
-            arrow.Arrow(2013, 1, 2, 6, 4, 5),
+            strelki.Arrow(2013, 1, 2, 3, 4, 5),
+            strelki.Arrow(2013, 1, 2, 4, 4, 5),
+            strelki.Arrow(2013, 1, 2, 5, 4, 5),
+            strelki.Arrow(2013, 1, 2, 6, 4, 5),
         ]
 
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "hour", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 3, 4, 5)
             )
         )
 
-        assert result == [arrow.Arrow(2013, 1, 2, 3, 4, 5)]
+        assert result == [strelki.Arrow(2013, 1, 2, 3, 4, 5)]
 
     def test_minute(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "minute", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 3, 7, 8)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 1, 2, 3, 4, 5),
-            arrow.Arrow(2013, 1, 2, 3, 5, 5),
-            arrow.Arrow(2013, 1, 2, 3, 6, 5),
-            arrow.Arrow(2013, 1, 2, 3, 7, 5),
+            strelki.Arrow(2013, 1, 2, 3, 4, 5),
+            strelki.Arrow(2013, 1, 2, 3, 5, 5),
+            strelki.Arrow(2013, 1, 2, 3, 6, 5),
+            strelki.Arrow(2013, 1, 2, 3, 7, 5),
         ]
 
     def test_second(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "second", datetime(2013, 1, 2, 3, 4, 5), datetime(2013, 1, 2, 3, 4, 8)
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 1, 2, 3, 4, 5),
-            arrow.Arrow(2013, 1, 2, 3, 4, 6),
-            arrow.Arrow(2013, 1, 2, 3, 4, 7),
-            arrow.Arrow(2013, 1, 2, 3, 4, 8),
+            strelki.Arrow(2013, 1, 2, 3, 4, 5),
+            strelki.Arrow(2013, 1, 2, 3, 4, 6),
+            strelki.Arrow(2013, 1, 2, 3, 4, 7),
+            strelki.Arrow(2013, 1, 2, 3, 4, 8),
         ]
 
-    def test_arrow(self):
+    def test_strelki(self):
         result = list(
-            arrow.Arrow.range(
+            strelki.Arrow.range(
                 "day",
-                arrow.Arrow(2013, 1, 2, 3, 4, 5),
-                arrow.Arrow(2013, 1, 5, 6, 7, 8),
+                strelki.Arrow(2013, 1, 2, 3, 4, 5),
+                strelki.Arrow(2013, 1, 5, 6, 7, 8),
             )
         )
 
         assert result == [
-            arrow.Arrow(2013, 1, 2, 3, 4, 5),
-            arrow.Arrow(2013, 1, 3, 3, 4, 5),
-            arrow.Arrow(2013, 1, 4, 3, 4, 5),
-            arrow.Arrow(2013, 1, 5, 3, 4, 5),
+            strelki.Arrow(2013, 1, 2, 3, 4, 5),
+            strelki.Arrow(2013, 1, 3, 3, 4, 5),
+            strelki.Arrow(2013, 1, 4, 3, 4, 5),
+            strelki.Arrow(2013, 1, 5, 3, 4, 5),
         ]
 
     def test_naive_tz(self):
-        result = arrow.Arrow.range(
+        result = strelki.Arrow.range(
             "year", datetime(2013, 1, 2, 3), datetime(2016, 4, 5, 6), "US/Pacific"
         )
 
@@ -1042,17 +1042,17 @@ class TestArrowRange:
             assert r.tzinfo == ZoneInfo("US/Pacific")
 
     def test_aware_same_tz(self):
-        result = arrow.Arrow.range(
+        result = strelki.Arrow.range(
             "day",
-            arrow.Arrow(2013, 1, 1, tzinfo=ZoneInfo("US/Pacific")),
-            arrow.Arrow(2013, 1, 3, tzinfo=ZoneInfo("US/Pacific")),
+            strelki.Arrow(2013, 1, 1, tzinfo=ZoneInfo("US/Pacific")),
+            strelki.Arrow(2013, 1, 3, tzinfo=ZoneInfo("US/Pacific")),
         )
 
         for r in result:
             assert r.tzinfo == ZoneInfo("US/Pacific")
 
     def test_aware_different_tz(self):
-        result = arrow.Arrow.range(
+        result = strelki.Arrow.range(
             "day",
             datetime(2013, 1, 1, tzinfo=ZoneInfo("US/Eastern")),
             datetime(2013, 1, 3, tzinfo=ZoneInfo("US/Pacific")),
@@ -1062,7 +1062,7 @@ class TestArrowRange:
             assert r.tzinfo == ZoneInfo("US/Eastern")
 
     def test_aware_tz(self):
-        result = arrow.Arrow.range(
+        result = strelki.Arrow.range(
             "day",
             datetime(2013, 1, 1, tzinfo=ZoneInfo("US/Eastern")),
             datetime(2013, 1, 3, tzinfo=ZoneInfo("US/Pacific")),
@@ -1075,11 +1075,11 @@ class TestArrowRange:
     def test_imaginary(self):
         # issue #72, avoid duplication in utc column
 
-        before = arrow.Arrow(2018, 3, 10, 23, tzinfo="US/Pacific")
-        after = arrow.Arrow(2018, 3, 11, 4, tzinfo="US/Pacific")
+        before = strelki.Arrow(2018, 3, 10, 23, tzinfo="US/Pacific")
+        after = strelki.Arrow(2018, 3, 11, 4, tzinfo="US/Pacific")
 
-        pacific_range = [t for t in arrow.Arrow.range("hour", before, after)]
-        utc_range = [t.to("utc") for t in arrow.Arrow.range("hour", before, after)]
+        pacific_range = [t for t in strelki.Arrow.range("hour", before, after)]
+        utc_range = [t.to("utc") for t in strelki.Arrow.range("hour", before, after)]
 
         assert len(pacific_range) == len(set(pacific_range))
         assert len(utc_range) == len(set(utc_range))
@@ -1087,273 +1087,273 @@ class TestArrowRange:
     def test_unsupported(self):
         with pytest.raises(ValueError):
             next(
-                arrow.Arrow.range(
+                strelki.Arrow.range(
                     "abc", datetime.now(timezone.utc), datetime.now(timezone.utc)
                 )
             )
 
     def test_range_over_months_ending_on_different_days(self):
         # regression test for issue #842
-        result = list(arrow.Arrow.range("month", datetime(2015, 1, 31), limit=4))
+        result = list(strelki.Arrow.range("month", datetime(2015, 1, 31), limit=4))
         assert result == [
-            arrow.Arrow(2015, 1, 31),
-            arrow.Arrow(2015, 2, 28),
-            arrow.Arrow(2015, 3, 31),
-            arrow.Arrow(2015, 4, 30),
+            strelki.Arrow(2015, 1, 31),
+            strelki.Arrow(2015, 2, 28),
+            strelki.Arrow(2015, 3, 31),
+            strelki.Arrow(2015, 4, 30),
         ]
 
-        result = list(arrow.Arrow.range("month", datetime(2015, 1, 30), limit=3))
+        result = list(strelki.Arrow.range("month", datetime(2015, 1, 30), limit=3))
         assert result == [
-            arrow.Arrow(2015, 1, 30),
-            arrow.Arrow(2015, 2, 28),
-            arrow.Arrow(2015, 3, 30),
+            strelki.Arrow(2015, 1, 30),
+            strelki.Arrow(2015, 2, 28),
+            strelki.Arrow(2015, 3, 30),
         ]
 
-        result = list(arrow.Arrow.range("month", datetime(2015, 2, 28), limit=3))
+        result = list(strelki.Arrow.range("month", datetime(2015, 2, 28), limit=3))
         assert result == [
-            arrow.Arrow(2015, 2, 28),
-            arrow.Arrow(2015, 3, 28),
-            arrow.Arrow(2015, 4, 28),
+            strelki.Arrow(2015, 2, 28),
+            strelki.Arrow(2015, 3, 28),
+            strelki.Arrow(2015, 4, 28),
         ]
 
-        result = list(arrow.Arrow.range("month", datetime(2015, 3, 31), limit=3))
+        result = list(strelki.Arrow.range("month", datetime(2015, 3, 31), limit=3))
         assert result == [
-            arrow.Arrow(2015, 3, 31),
-            arrow.Arrow(2015, 4, 30),
-            arrow.Arrow(2015, 5, 31),
+            strelki.Arrow(2015, 3, 31),
+            strelki.Arrow(2015, 4, 30),
+            strelki.Arrow(2015, 5, 31),
         ]
 
     def test_range_over_quarter_months_ending_on_different_days(self):
-        result = list(arrow.Arrow.range("quarter", datetime(2014, 11, 30), limit=3))
+        result = list(strelki.Arrow.range("quarter", datetime(2014, 11, 30), limit=3))
         assert result == [
-            arrow.Arrow(2014, 11, 30),
-            arrow.Arrow(2015, 2, 28),
-            arrow.Arrow(2015, 5, 30),
+            strelki.Arrow(2014, 11, 30),
+            strelki.Arrow(2015, 2, 28),
+            strelki.Arrow(2015, 5, 30),
         ]
 
     def test_range_over_year_maintains_end_date_across_leap_year(self):
-        result = list(arrow.Arrow.range("year", datetime(2012, 2, 29), limit=5))
+        result = list(strelki.Arrow.range("year", datetime(2012, 2, 29), limit=5))
         assert result == [
-            arrow.Arrow(2012, 2, 29),
-            arrow.Arrow(2013, 2, 28),
-            arrow.Arrow(2014, 2, 28),
-            arrow.Arrow(2015, 2, 28),
-            arrow.Arrow(2016, 2, 29),
+            strelki.Arrow(2012, 2, 29),
+            strelki.Arrow(2013, 2, 28),
+            strelki.Arrow(2014, 2, 28),
+            strelki.Arrow(2015, 2, 28),
+            strelki.Arrow(2016, 2, 29),
         ]
 
 
-class TestArrowSpanRange:
+class TestStrelkiSpanRange:
     def test_year(self):
         result = list(
-            arrow.Arrow.span_range("year", datetime(2013, 2, 1), datetime(2016, 3, 31))
+            strelki.Arrow.span_range("year", datetime(2013, 2, 1), datetime(2016, 3, 31))
         )
 
         assert result == [
             (
-                arrow.Arrow(2013, 1, 1),
-                arrow.Arrow(2013, 12, 31, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 1),
+                strelki.Arrow(2013, 12, 31, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2014, 1, 1),
-                arrow.Arrow(2014, 12, 31, 23, 59, 59, 999999),
+                strelki.Arrow(2014, 1, 1),
+                strelki.Arrow(2014, 12, 31, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2015, 1, 1),
-                arrow.Arrow(2015, 12, 31, 23, 59, 59, 999999),
+                strelki.Arrow(2015, 1, 1),
+                strelki.Arrow(2015, 12, 31, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2016, 1, 1),
-                arrow.Arrow(2016, 12, 31, 23, 59, 59, 999999),
+                strelki.Arrow(2016, 1, 1),
+                strelki.Arrow(2016, 12, 31, 23, 59, 59, 999999),
             ),
         ]
 
     def test_quarter(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "quarter", datetime(2013, 2, 2), datetime(2013, 5, 15)
             )
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 1), arrow.Arrow(2013, 3, 31, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 4, 1), arrow.Arrow(2013, 6, 30, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 1, 1), strelki.Arrow(2013, 3, 31, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 4, 1), strelki.Arrow(2013, 6, 30, 23, 59, 59, 999999)),
         ]
 
     def test_month(self):
         result = list(
-            arrow.Arrow.span_range("month", datetime(2013, 1, 2), datetime(2013, 4, 15))
+            strelki.Arrow.span_range("month", datetime(2013, 1, 2), datetime(2013, 4, 15))
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 1), arrow.Arrow(2013, 1, 31, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 2, 1), arrow.Arrow(2013, 2, 28, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 3, 1), arrow.Arrow(2013, 3, 31, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 4, 1), arrow.Arrow(2013, 4, 30, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 1, 1), strelki.Arrow(2013, 1, 31, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 2, 1), strelki.Arrow(2013, 2, 28, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 3, 1), strelki.Arrow(2013, 3, 31, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 4, 1), strelki.Arrow(2013, 4, 30, 23, 59, 59, 999999)),
         ]
 
     def test_week(self):
         result = list(
-            arrow.Arrow.span_range("week", datetime(2013, 2, 2), datetime(2013, 2, 28))
+            strelki.Arrow.span_range("week", datetime(2013, 2, 2), datetime(2013, 2, 28))
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 28), arrow.Arrow(2013, 2, 3, 23, 59, 59, 999999)),
-            (arrow.Arrow(2013, 2, 4), arrow.Arrow(2013, 2, 10, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 1, 28), strelki.Arrow(2013, 2, 3, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 2, 4), strelki.Arrow(2013, 2, 10, 23, 59, 59, 999999)),
             (
-                arrow.Arrow(2013, 2, 11),
-                arrow.Arrow(2013, 2, 17, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 2, 11),
+                strelki.Arrow(2013, 2, 17, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 2, 18),
-                arrow.Arrow(2013, 2, 24, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 2, 18),
+                strelki.Arrow(2013, 2, 24, 23, 59, 59, 999999),
             ),
-            (arrow.Arrow(2013, 2, 25), arrow.Arrow(2013, 3, 3, 23, 59, 59, 999999)),
+            (strelki.Arrow(2013, 2, 25), strelki.Arrow(2013, 3, 3, 23, 59, 59, 999999)),
         ]
 
     def test_day(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "day", datetime(2013, 1, 1, 12), datetime(2013, 1, 4, 12)
             )
         )
 
         assert result == [
             (
-                arrow.Arrow(2013, 1, 1, 0),
-                arrow.Arrow(2013, 1, 1, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 0),
+                strelki.Arrow(2013, 1, 1, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 2, 0),
-                arrow.Arrow(2013, 1, 2, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 2, 0),
+                strelki.Arrow(2013, 1, 2, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 3, 0),
-                arrow.Arrow(2013, 1, 3, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 3, 0),
+                strelki.Arrow(2013, 1, 3, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 4, 0),
-                arrow.Arrow(2013, 1, 4, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 4, 0),
+                strelki.Arrow(2013, 1, 4, 23, 59, 59, 999999),
             ),
         ]
 
     def test_days(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "days", datetime(2013, 1, 1, 12), datetime(2013, 1, 4, 12)
             )
         )
 
         assert result == [
             (
-                arrow.Arrow(2013, 1, 1, 0),
-                arrow.Arrow(2013, 1, 1, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 0),
+                strelki.Arrow(2013, 1, 1, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 2, 0),
-                arrow.Arrow(2013, 1, 2, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 2, 0),
+                strelki.Arrow(2013, 1, 2, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 3, 0),
-                arrow.Arrow(2013, 1, 3, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 3, 0),
+                strelki.Arrow(2013, 1, 3, 23, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 4, 0),
-                arrow.Arrow(2013, 1, 4, 23, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 4, 0),
+                strelki.Arrow(2013, 1, 4, 23, 59, 59, 999999),
             ),
         ]
 
     def test_hour(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "hour", datetime(2013, 1, 1, 0, 30), datetime(2013, 1, 1, 3, 30)
             )
         )
 
         assert result == [
             (
-                arrow.Arrow(2013, 1, 1, 0),
-                arrow.Arrow(2013, 1, 1, 0, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 0),
+                strelki.Arrow(2013, 1, 1, 0, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 1),
-                arrow.Arrow(2013, 1, 1, 1, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 1),
+                strelki.Arrow(2013, 1, 1, 1, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 2),
-                arrow.Arrow(2013, 1, 1, 2, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 2),
+                strelki.Arrow(2013, 1, 1, 2, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 3),
-                arrow.Arrow(2013, 1, 1, 3, 59, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 3),
+                strelki.Arrow(2013, 1, 1, 3, 59, 59, 999999),
             ),
         ]
 
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "hour", datetime(2013, 1, 1, 3, 30), datetime(2013, 1, 1, 3, 30)
             )
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 1, 3), arrow.Arrow(2013, 1, 1, 3, 59, 59, 999999))
+            (strelki.Arrow(2013, 1, 1, 3), strelki.Arrow(2013, 1, 1, 3, 59, 59, 999999))
         ]
 
     def test_minute(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "minute", datetime(2013, 1, 1, 0, 0, 30), datetime(2013, 1, 1, 0, 3, 30)
             )
         )
 
         assert result == [
             (
-                arrow.Arrow(2013, 1, 1, 0, 0),
-                arrow.Arrow(2013, 1, 1, 0, 0, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 0),
+                strelki.Arrow(2013, 1, 1, 0, 0, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 0, 1),
-                arrow.Arrow(2013, 1, 1, 0, 1, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 1),
+                strelki.Arrow(2013, 1, 1, 0, 1, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 0, 2),
-                arrow.Arrow(2013, 1, 1, 0, 2, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 2),
+                strelki.Arrow(2013, 1, 1, 0, 2, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 0, 3),
-                arrow.Arrow(2013, 1, 1, 0, 3, 59, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 3),
+                strelki.Arrow(2013, 1, 1, 0, 3, 59, 999999),
             ),
         ]
 
     def test_second(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "second", datetime(2013, 1, 1), datetime(2013, 1, 1, 0, 0, 3)
             )
         )
 
         assert result == [
             (
-                arrow.Arrow(2013, 1, 1, 0, 0, 0),
-                arrow.Arrow(2013, 1, 1, 0, 0, 0, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 0, 0),
+                strelki.Arrow(2013, 1, 1, 0, 0, 0, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 0, 0, 1),
-                arrow.Arrow(2013, 1, 1, 0, 0, 1, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 0, 1),
+                strelki.Arrow(2013, 1, 1, 0, 0, 1, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 0, 0, 2),
-                arrow.Arrow(2013, 1, 1, 0, 0, 2, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 0, 2),
+                strelki.Arrow(2013, 1, 1, 0, 0, 2, 999999),
             ),
             (
-                arrow.Arrow(2013, 1, 1, 0, 0, 3),
-                arrow.Arrow(2013, 1, 1, 0, 0, 3, 999999),
+                strelki.Arrow(2013, 1, 1, 0, 0, 3),
+                strelki.Arrow(2013, 1, 1, 0, 0, 3, 999999),
             ),
         ]
 
     def test_naive_tz(self):
         tzinfo = ZoneInfo("US/Pacific")
 
-        result = arrow.Arrow.span_range(
+        result = strelki.Arrow.span_range(
             "hour", datetime(2013, 1, 1, 0), datetime(2013, 1, 1, 3, 59), "US/Pacific"
         )
 
@@ -1364,7 +1364,7 @@ class TestArrowSpanRange:
     def test_aware_same_tz(self):
         tzinfo = ZoneInfo("US/Pacific")
 
-        result = arrow.Arrow.span_range(
+        result = strelki.Arrow.span_range(
             "hour",
             datetime(2013, 1, 1, 0, tzinfo=tzinfo),
             datetime(2013, 1, 1, 2, 59, tzinfo=tzinfo),
@@ -1378,7 +1378,7 @@ class TestArrowSpanRange:
         tzinfo1 = ZoneInfo("US/Pacific")
         tzinfo2 = ZoneInfo("US/Eastern")
 
-        result = arrow.Arrow.span_range(
+        result = strelki.Arrow.span_range(
             "hour",
             datetime(2013, 1, 1, 0, tzinfo=tzinfo1),
             datetime(2013, 1, 1, 2, 59, tzinfo=tzinfo2),
@@ -1389,7 +1389,7 @@ class TestArrowSpanRange:
             assert c.tzinfo == tzinfo1
 
     def test_aware_tz(self):
-        result = arrow.Arrow.span_range(
+        result = strelki.Arrow.span_range(
             "hour",
             datetime(2013, 1, 1, 0, tzinfo=ZoneInfo("US/Eastern")),
             datetime(2013, 1, 1, 2, 59, tzinfo=ZoneInfo("US/Eastern")),
@@ -1402,19 +1402,19 @@ class TestArrowSpanRange:
 
     def test_bounds_param_is_passed(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "quarter", datetime(2013, 2, 2), datetime(2013, 5, 15), bounds="[]"
             )
         )
 
         assert result == [
-            (arrow.Arrow(2013, 1, 1), arrow.Arrow(2013, 4, 1)),
-            (arrow.Arrow(2013, 4, 1), arrow.Arrow(2013, 7, 1)),
+            (strelki.Arrow(2013, 1, 1), strelki.Arrow(2013, 4, 1)),
+            (strelki.Arrow(2013, 4, 1), strelki.Arrow(2013, 7, 1)),
         ]
 
     def test_exact_bound_exclude(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "hour",
                 datetime(2013, 5, 5, 12, 30),
                 datetime(2013, 5, 5, 17, 15),
@@ -1425,24 +1425,24 @@ class TestArrowSpanRange:
 
         expected = [
             (
-                arrow.Arrow(2013, 5, 5, 12, 30),
-                arrow.Arrow(2013, 5, 5, 13, 29, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 30),
+                strelki.Arrow(2013, 5, 5, 13, 29, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 13, 30),
-                arrow.Arrow(2013, 5, 5, 14, 29, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 13, 30),
+                strelki.Arrow(2013, 5, 5, 14, 29, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 14, 30),
-                arrow.Arrow(2013, 5, 5, 15, 29, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 14, 30),
+                strelki.Arrow(2013, 5, 5, 15, 29, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 15, 30),
-                arrow.Arrow(2013, 5, 5, 16, 29, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 15, 30),
+                strelki.Arrow(2013, 5, 5, 16, 29, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 16, 30),
-                arrow.Arrow(2013, 5, 5, 17, 14, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 16, 30),
+                strelki.Arrow(2013, 5, 5, 17, 14, 59, 999999),
             ),
         ]
 
@@ -1450,7 +1450,7 @@ class TestArrowSpanRange:
 
     def test_exact_floor_equals_end(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "minute",
                 datetime(2013, 5, 5, 12, 30),
                 datetime(2013, 5, 5, 12, 40),
@@ -1460,44 +1460,44 @@ class TestArrowSpanRange:
 
         expected = [
             (
-                arrow.Arrow(2013, 5, 5, 12, 30),
-                arrow.Arrow(2013, 5, 5, 12, 30, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 30),
+                strelki.Arrow(2013, 5, 5, 12, 30, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 31),
-                arrow.Arrow(2013, 5, 5, 12, 31, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 31),
+                strelki.Arrow(2013, 5, 5, 12, 31, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 32),
-                arrow.Arrow(2013, 5, 5, 12, 32, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 32),
+                strelki.Arrow(2013, 5, 5, 12, 32, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 33),
-                arrow.Arrow(2013, 5, 5, 12, 33, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 33),
+                strelki.Arrow(2013, 5, 5, 12, 33, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 34),
-                arrow.Arrow(2013, 5, 5, 12, 34, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 34),
+                strelki.Arrow(2013, 5, 5, 12, 34, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 35),
-                arrow.Arrow(2013, 5, 5, 12, 35, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 35),
+                strelki.Arrow(2013, 5, 5, 12, 35, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 36),
-                arrow.Arrow(2013, 5, 5, 12, 36, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 36),
+                strelki.Arrow(2013, 5, 5, 12, 36, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 37),
-                arrow.Arrow(2013, 5, 5, 12, 37, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 37),
+                strelki.Arrow(2013, 5, 5, 12, 37, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 38),
-                arrow.Arrow(2013, 5, 5, 12, 38, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 38),
+                strelki.Arrow(2013, 5, 5, 12, 38, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 12, 39),
-                arrow.Arrow(2013, 5, 5, 12, 39, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 39),
+                strelki.Arrow(2013, 5, 5, 12, 39, 59, 999999),
             ),
         ]
 
@@ -1505,7 +1505,7 @@ class TestArrowSpanRange:
 
     def test_exact_bound_include(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "hour",
                 datetime(2013, 5, 5, 2, 30),
                 datetime(2013, 5, 5, 6, 00),
@@ -1516,20 +1516,20 @@ class TestArrowSpanRange:
 
         expected = [
             (
-                arrow.Arrow(2013, 5, 5, 2, 30, 00, 1),
-                arrow.Arrow(2013, 5, 5, 3, 30, 00, 0),
+                strelki.Arrow(2013, 5, 5, 2, 30, 00, 1),
+                strelki.Arrow(2013, 5, 5, 3, 30, 00, 0),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 3, 30, 00, 1),
-                arrow.Arrow(2013, 5, 5, 4, 30, 00, 0),
+                strelki.Arrow(2013, 5, 5, 3, 30, 00, 1),
+                strelki.Arrow(2013, 5, 5, 4, 30, 00, 0),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 4, 30, 00, 1),
-                arrow.Arrow(2013, 5, 5, 5, 30, 00, 0),
+                strelki.Arrow(2013, 5, 5, 4, 30, 00, 1),
+                strelki.Arrow(2013, 5, 5, 5, 30, 00, 0),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 5, 30, 00, 1),
-                arrow.Arrow(2013, 5, 5, 6, 00),
+                strelki.Arrow(2013, 5, 5, 5, 30, 00, 1),
+                strelki.Arrow(2013, 5, 5, 6, 00),
             ),
         ]
 
@@ -1537,7 +1537,7 @@ class TestArrowSpanRange:
 
     def test_small_interval_exact_open_bounds(self):
         result = list(
-            arrow.Arrow.span_range(
+            strelki.Arrow.span_range(
                 "minute",
                 datetime(2013, 5, 5, 2, 30),
                 datetime(2013, 5, 5, 2, 31),
@@ -1548,48 +1548,48 @@ class TestArrowSpanRange:
 
         expected = [
             (
-                arrow.Arrow(2013, 5, 5, 2, 30, 00, 1),
-                arrow.Arrow(2013, 5, 5, 2, 30, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 2, 30, 00, 1),
+                strelki.Arrow(2013, 5, 5, 2, 30, 59, 999999),
             ),
         ]
 
         assert result == expected
 
 
-class TestArrowInterval:
+class TestStrelkiInterval:
     def test_incorrect_input(self):
         with pytest.raises(ValueError):
             list(
-                arrow.Arrow.interval(
+                strelki.Arrow.interval(
                     "month", datetime(2013, 1, 2), datetime(2013, 4, 15), 0
                 )
             )
 
     def test_correct(self):
         result = list(
-            arrow.Arrow.interval(
+            strelki.Arrow.interval(
                 "hour", datetime(2013, 5, 5, 12, 30), datetime(2013, 5, 5, 17, 15), 2
             )
         )
 
         assert result == [
             (
-                arrow.Arrow(2013, 5, 5, 12),
-                arrow.Arrow(2013, 5, 5, 13, 59, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12),
+                strelki.Arrow(2013, 5, 5, 13, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 14),
-                arrow.Arrow(2013, 5, 5, 15, 59, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 14),
+                strelki.Arrow(2013, 5, 5, 15, 59, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 16),
-                arrow.Arrow(2013, 5, 5, 17, 59, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 16),
+                strelki.Arrow(2013, 5, 5, 17, 59, 59, 999999),
             ),
         ]
 
     def test_bounds_param_is_passed(self):
         result = list(
-            arrow.Arrow.interval(
+            strelki.Arrow.interval(
                 "hour",
                 datetime(2013, 5, 5, 12, 30),
                 datetime(2013, 5, 5, 17, 15),
@@ -1599,14 +1599,14 @@ class TestArrowInterval:
         )
 
         assert result == [
-            (arrow.Arrow(2013, 5, 5, 12), arrow.Arrow(2013, 5, 5, 14)),
-            (arrow.Arrow(2013, 5, 5, 14), arrow.Arrow(2013, 5, 5, 16)),
-            (arrow.Arrow(2013, 5, 5, 16), arrow.Arrow(2013, 5, 5, 18)),
+            (strelki.Arrow(2013, 5, 5, 12), strelki.Arrow(2013, 5, 5, 14)),
+            (strelki.Arrow(2013, 5, 5, 14), strelki.Arrow(2013, 5, 5, 16)),
+            (strelki.Arrow(2013, 5, 5, 16), strelki.Arrow(2013, 5, 5, 18)),
         ]
 
     def test_exact(self):
         result = list(
-            arrow.Arrow.interval(
+            strelki.Arrow.interval(
                 "hour",
                 datetime(2013, 5, 5, 12, 30),
                 datetime(2013, 5, 5, 17, 15),
@@ -1617,12 +1617,12 @@ class TestArrowInterval:
 
         expected = [
             (
-                arrow.Arrow(2013, 5, 5, 12, 30),
-                arrow.Arrow(2013, 5, 5, 16, 29, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 12, 30),
+                strelki.Arrow(2013, 5, 5, 16, 29, 59, 999999),
             ),
             (
-                arrow.Arrow(2013, 5, 5, 16, 30),
-                arrow.Arrow(2013, 5, 5, 17, 14, 59, 999999),
+                strelki.Arrow(2013, 5, 5, 16, 30),
+                strelki.Arrow(2013, 5, 5, 17, 14, 59, 999999),
             ),
         ]
 
@@ -1630,130 +1630,130 @@ class TestArrowInterval:
 
 
 @pytest.mark.usefixtures("time_2013_02_15")
-class TestArrowSpan:
+class TestStrelkiSpan:
     def test_span_attribute(self):
         with pytest.raises(ValueError):
-            self.arrow.span("span")
+            self.strelki.span("span")
 
     def test_span_year(self):
-        floor, ceil = self.arrow.span("year")
+        floor, ceil = self.strelki.span("year")
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 12, 31, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_quarter(self):
-        floor, ceil = self.arrow.span("quarter")
+        floor, ceil = self.strelki.span("quarter")
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 3, 31, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_quarter_count(self):
-        floor, ceil = self.arrow.span("quarter", 2)
+        floor, ceil = self.strelki.span("quarter", 2)
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 6, 30, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_year_count(self):
-        floor, ceil = self.arrow.span("year", 2)
+        floor, ceil = self.strelki.span("year", 2)
 
         assert floor == datetime(2013, 1, 1, tzinfo=tz.tzutc())
         assert ceil == datetime(2014, 12, 31, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_month(self):
-        floor, ceil = self.arrow.span("month")
+        floor, ceil = self.strelki.span("month")
 
         assert floor == datetime(2013, 2, 1, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 28, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_week(self):
         """
-        >>> self.arrow.format("YYYY-MM-DD") == "2013-02-15"
-        >>> self.arrow.isoweekday() == 5  # a Friday
+        >>> self.strelki.format("YYYY-MM-DD") == "2013-02-15"
+        >>> self.strelki.isoweekday() == 5  # a Friday
         """
         # span week from Monday to Sunday
-        floor, ceil = self.arrow.span("week")
+        floor, ceil = self.strelki.span("week")
 
         assert floor == datetime(2013, 2, 11, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 17, 23, 59, 59, 999999, tzinfo=tz.tzutc())
         # span week from Tuesday to Monday
-        floor, ceil = self.arrow.span("week", week_start=2)
+        floor, ceil = self.strelki.span("week", week_start=2)
 
         assert floor == datetime(2013, 2, 12, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 18, 23, 59, 59, 999999, tzinfo=tz.tzutc())
         # span week from Saturday to Friday
-        floor, ceil = self.arrow.span("week", week_start=6)
+        floor, ceil = self.strelki.span("week", week_start=6)
 
         assert floor == datetime(2013, 2, 9, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 23, 59, 59, 999999, tzinfo=tz.tzutc())
         # span week from Sunday to Saturday
-        floor, ceil = self.arrow.span("week", week_start=7)
+        floor, ceil = self.strelki.span("week", week_start=7)
 
         assert floor == datetime(2013, 2, 10, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 16, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_day(self):
-        floor, ceil = self.arrow.span("day")
+        floor, ceil = self.strelki.span("day")
 
         assert floor == datetime(2013, 2, 15, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_hour(self):
-        floor, ceil = self.arrow.span("hour")
+        floor, ceil = self.strelki.span("hour")
 
         assert floor == datetime(2013, 2, 15, 3, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 3, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_minute(self):
-        floor, ceil = self.arrow.span("minute")
+        floor, ceil = self.strelki.span("minute")
 
         assert floor == datetime(2013, 2, 15, 3, 41, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 3, 41, 59, 999999, tzinfo=tz.tzutc())
 
     def test_span_second(self):
-        floor, ceil = self.arrow.span("second")
+        floor, ceil = self.strelki.span("second")
 
         assert floor == datetime(2013, 2, 15, 3, 41, 22, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 3, 41, 22, 999999, tzinfo=tz.tzutc())
 
     def test_span_microsecond(self):
-        floor, ceil = self.arrow.span("microsecond")
+        floor, ceil = self.strelki.span("microsecond")
 
         assert floor == datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
 
     def test_floor(self):
-        floor, ceil = self.arrow.span("month")
+        floor, ceil = self.strelki.span("month")
 
-        assert floor == self.arrow.floor("month")
-        assert ceil == self.arrow.ceil("month")
+        assert floor == self.strelki.floor("month")
+        assert ceil == self.strelki.ceil("month")
 
     def test_floor_week_start(self):
         """
         Test floor method with week_start parameter for different week starts.
         """
         # Test with default week_start=1 (Monday)
-        floor_default = self.arrow.floor("week")
-        floor_span_default, _ = self.arrow.span("week")
+        floor_default = self.strelki.floor("week")
+        floor_span_default, _ = self.strelki.span("week")
         assert floor_default == floor_span_default
 
         # Test with week_start=1 (Monday) - explicit
-        floor_monday = self.arrow.floor("week", week_start=1)
-        floor_span_monday, _ = self.arrow.span("week", week_start=1)
+        floor_monday = self.strelki.floor("week", week_start=1)
+        floor_span_monday, _ = self.strelki.span("week", week_start=1)
         assert floor_monday == floor_span_monday
 
         # Test with week_start=7 (Sunday)
-        floor_sunday = self.arrow.floor("week", week_start=7)
-        floor_span_sunday, _ = self.arrow.span("week", week_start=7)
+        floor_sunday = self.strelki.floor("week", week_start=7)
+        floor_span_sunday, _ = self.strelki.span("week", week_start=7)
         assert floor_sunday == floor_span_sunday
 
         # Test with week_start=6 (Saturday)
-        floor_saturday = self.arrow.floor("week", week_start=6)
-        floor_span_saturday, _ = self.arrow.span("week", week_start=6)
+        floor_saturday = self.strelki.floor("week", week_start=6)
+        floor_span_saturday, _ = self.strelki.span("week", week_start=6)
         assert floor_saturday == floor_span_saturday
 
         # Test with week_start=2 (Tuesday)
-        floor_tuesday = self.arrow.floor("week", week_start=2)
-        floor_span_tuesday, _ = self.arrow.span("week", week_start=2)
+        floor_tuesday = self.strelki.floor("week", week_start=2)
+        floor_span_tuesday, _ = self.strelki.span("week", week_start=2)
         assert floor_tuesday == floor_span_tuesday
 
     def test_ceil_week_start(self):
@@ -1761,57 +1761,57 @@ class TestArrowSpan:
         Test ceil method with week_start parameter for different week starts.
         """
         # Test with default week_start=1 (Monday)
-        ceil_default = self.arrow.ceil("week")
-        _, ceil_span_default = self.arrow.span("week")
+        ceil_default = self.strelki.ceil("week")
+        _, ceil_span_default = self.strelki.span("week")
         assert ceil_default == ceil_span_default
 
         # Test with week_start=1 (Monday) - explicit
-        ceil_monday = self.arrow.ceil("week", week_start=1)
-        _, ceil_span_monday = self.arrow.span("week", week_start=1)
+        ceil_monday = self.strelki.ceil("week", week_start=1)
+        _, ceil_span_monday = self.strelki.span("week", week_start=1)
         assert ceil_monday == ceil_span_monday
 
         # Test with week_start=7 (Sunday)
-        ceil_sunday = self.arrow.ceil("week", week_start=7)
-        _, ceil_span_sunday = self.arrow.span("week", week_start=7)
+        ceil_sunday = self.strelki.ceil("week", week_start=7)
+        _, ceil_span_sunday = self.strelki.span("week", week_start=7)
         assert ceil_sunday == ceil_span_sunday
 
         # Test with week_start=6 (Saturday)
-        ceil_saturday = self.arrow.ceil("week", week_start=6)
-        _, ceil_span_saturday = self.arrow.span("week", week_start=6)
+        ceil_saturday = self.strelki.ceil("week", week_start=6)
+        _, ceil_span_saturday = self.strelki.span("week", week_start=6)
         assert ceil_saturday == ceil_span_saturday
 
         # Test with week_start=2 (Tuesday)
-        ceil_tuesday = self.arrow.ceil("week", week_start=2)
-        _, ceil_span_tuesday = self.arrow.span("week", week_start=2)
+        ceil_tuesday = self.strelki.ceil("week", week_start=2)
+        _, ceil_span_tuesday = self.strelki.span("week", week_start=2)
         assert ceil_tuesday == ceil_span_tuesday
 
     def test_floor_ceil_week_start_values(self):
         """
         Test specific date values for floor and ceil with different week_start values.
-        The test arrow is 2013-02-15 (Friday, isoweekday=5).
+        The test strelki is 2013-02-15 (Friday, isoweekday=5).
         """
         # Test Monday start (week_start=1)
         # Friday should floor to previous Monday (2013-02-11)
-        floor_mon = self.arrow.floor("week", week_start=1)
+        floor_mon = self.strelki.floor("week", week_start=1)
         assert floor_mon == datetime(2013, 2, 11, tzinfo=tz.tzutc())
         # Friday should ceil to next Sunday (2013-02-17)
-        ceil_mon = self.arrow.ceil("week", week_start=1)
+        ceil_mon = self.strelki.ceil("week", week_start=1)
         assert ceil_mon == datetime(2013, 2, 17, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
         # Test Sunday start (week_start=7)
         # Friday should floor to previous Sunday (2013-02-10)
-        floor_sun = self.arrow.floor("week", week_start=7)
+        floor_sun = self.strelki.floor("week", week_start=7)
         assert floor_sun == datetime(2013, 2, 10, tzinfo=tz.tzutc())
         # Friday should ceil to next Saturday (2013-02-16)
-        ceil_sun = self.arrow.ceil("week", week_start=7)
+        ceil_sun = self.strelki.ceil("week", week_start=7)
         assert ceil_sun == datetime(2013, 2, 16, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
         # Test Saturday start (week_start=6)
         # Friday should floor to previous Saturday (2013-02-09)
-        floor_sat = self.arrow.floor("week", week_start=6)
+        floor_sat = self.strelki.floor("week", week_start=6)
         assert floor_sat == datetime(2013, 2, 9, tzinfo=tz.tzutc())
         # Friday should ceil to next Friday (2013-02-15)
-        ceil_sat = self.arrow.ceil("week", week_start=6)
+        ceil_sat = self.strelki.ceil("week", week_start=6)
         assert ceil_sat == datetime(2013, 2, 15, 23, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_floor_ceil_week_start_backward_compatibility(self):
@@ -1820,12 +1820,12 @@ class TestArrowSpan:
         when called without the week_start parameter.
         """
         # Test that calling floor/ceil without parameters works the same as before
-        floor_old = self.arrow.floor("week")
-        floor_new = self.arrow.floor("week", week_start=1)  # default value
+        floor_old = self.strelki.floor("week")
+        floor_new = self.strelki.floor("week", week_start=1)  # default value
         assert floor_old == floor_new
 
-        ceil_old = self.arrow.ceil("week")
-        ceil_new = self.arrow.ceil("week", week_start=1)  # default value
+        ceil_old = self.strelki.ceil("week")
+        ceil_new = self.strelki.ceil("week", week_start=1)  # default value
         assert ceil_old == ceil_new
 
     def test_floor_ceil_week_start_ignored_for_non_week_frames(self):
@@ -1835,13 +1835,13 @@ class TestArrowSpan:
         # Test that week_start parameter is ignored for different frames
         for frame in ["hour", "day", "month", "year"]:
             # floor should work the same with or without week_start for non-week frames
-            floor_without = self.arrow.floor(frame)
-            floor_with = self.arrow.floor(frame, week_start=7)  # should be ignored
+            floor_without = self.strelki.floor(frame)
+            floor_with = self.strelki.floor(frame, week_start=7)  # should be ignored
             assert floor_without == floor_with
 
             # ceil should work the same with or without week_start for non-week frames
-            ceil_without = self.arrow.ceil(frame)
-            ceil_with = self.arrow.ceil(frame, week_start=7)  # should be ignored
+            ceil_without = self.strelki.ceil(frame)
+            ceil_with = self.strelki.ceil(frame, week_start=7)  # should be ignored
             assert ceil_without == ceil_with
 
     def test_floor_ceil_week_start_validation(self):
@@ -1850,63 +1850,63 @@ class TestArrowSpan:
         """
         # Valid values should work for week frames
         for week_start in range(1, 8):
-            self.arrow.floor("week", week_start=week_start)
-            self.arrow.ceil("week", week_start=week_start)
+            self.strelki.floor("week", week_start=week_start)
+            self.strelki.ceil("week", week_start=week_start)
 
         # Invalid values should raise ValueError for week frames
         with pytest.raises(
             ValueError, match="week_start argument must be between 1 and 7"
         ):
-            self.arrow.floor("week", week_start=0)
+            self.strelki.floor("week", week_start=0)
 
         with pytest.raises(
             ValueError, match="week_start argument must be between 1 and 7"
         ):
-            self.arrow.floor("week", week_start=8)
+            self.strelki.floor("week", week_start=8)
 
         with pytest.raises(
             ValueError, match="week_start argument must be between 1 and 7"
         ):
-            self.arrow.ceil("week", week_start=0)
+            self.strelki.ceil("week", week_start=0)
 
         with pytest.raises(
             ValueError, match="week_start argument must be between 1 and 7"
         ):
-            self.arrow.ceil("week", week_start=8)
+            self.strelki.ceil("week", week_start=8)
 
         # Invalid week_start values should be ignored for non-week frames (no validation)
         # This ensures the parameter doesn't cause errors for other frames
         for frame in ["hour", "day", "month", "year"]:
             # These should not raise errors even though week_start is invalid
-            self.arrow.floor(frame, week_start=0)
-            self.arrow.floor(frame, week_start=8)
-            self.arrow.ceil(frame, week_start=0)
-            self.arrow.ceil(frame, week_start=8)
+            self.strelki.floor(frame, week_start=0)
+            self.strelki.floor(frame, week_start=8)
+            self.strelki.ceil(frame, week_start=0)
+            self.strelki.ceil(frame, week_start=8)
 
     def test_span_inclusive_inclusive(self):
-        floor, ceil = self.arrow.span("hour", bounds="[]")
+        floor, ceil = self.strelki.span("hour", bounds="[]")
 
         assert floor == datetime(2013, 2, 15, 3, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 4, tzinfo=tz.tzutc())
 
     def test_span_exclusive_inclusive(self):
-        floor, ceil = self.arrow.span("hour", bounds="(]")
+        floor, ceil = self.strelki.span("hour", bounds="(]")
 
         assert floor == datetime(2013, 2, 15, 3, 0, 0, 1, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 4, tzinfo=tz.tzutc())
 
     def test_span_exclusive_exclusive(self):
-        floor, ceil = self.arrow.span("hour", bounds="()")
+        floor, ceil = self.strelki.span("hour", bounds="()")
 
         assert floor == datetime(2013, 2, 15, 3, 0, 0, 1, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 3, 59, 59, 999999, tzinfo=tz.tzutc())
 
     def test_bounds_are_validated(self):
         with pytest.raises(ValueError):
-            floor, ceil = self.arrow.span("hour", bounds="][")
+            floor, ceil = self.strelki.span("hour", bounds="][")
 
     def test_exact(self):
-        result_floor, result_ceil = self.arrow.span("hour", exact=True)
+        result_floor, result_ceil = self.strelki.span("hour", exact=True)
 
         expected_floor = datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
         expected_ceil = datetime(2013, 2, 15, 4, 41, 22, 8922, tzinfo=tz.tzutc())
@@ -1915,32 +1915,32 @@ class TestArrowSpan:
         assert result_ceil == expected_ceil
 
     def test_exact_inclusive_inclusive(self):
-        floor, ceil = self.arrow.span("minute", bounds="[]", exact=True)
+        floor, ceil = self.strelki.span("minute", bounds="[]", exact=True)
 
         assert floor == datetime(2013, 2, 15, 3, 41, 22, 8923, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 3, 42, 22, 8923, tzinfo=tz.tzutc())
 
     def test_exact_exclusive_inclusive(self):
-        floor, ceil = self.arrow.span("day", bounds="(]", exact=True)
+        floor, ceil = self.strelki.span("day", bounds="(]", exact=True)
 
         assert floor == datetime(2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 16, 3, 41, 22, 8923, tzinfo=tz.tzutc())
 
     def test_exact_exclusive_exclusive(self):
-        floor, ceil = self.arrow.span("second", bounds="()", exact=True)
+        floor, ceil = self.strelki.span("second", bounds="()", exact=True)
 
         assert floor == datetime(2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 2, 15, 3, 41, 23, 8922, tzinfo=tz.tzutc())
 
     def test_all_parameters_specified(self):
-        floor, ceil = self.arrow.span("week", bounds="()", exact=True, count=2)
+        floor, ceil = self.strelki.span("week", bounds="()", exact=True, count=2)
 
         assert floor == datetime(2013, 2, 15, 3, 41, 22, 8924, tzinfo=tz.tzutc())
         assert ceil == datetime(2013, 3, 1, 3, 41, 22, 8922, tzinfo=tz.tzutc())
 
 
 @pytest.mark.usefixtures("time_2013_01_01")
-class TestArrowHumanize:
+class TestStrelkiHumanize:
     def test_granularity(self):
         assert self.now.humanize(granularity="second") == "just now"
 
@@ -2251,40 +2251,40 @@ class TestArrowHumanize:
         assert self.now.humanize(later, only_distance=True) == "2 years"
         assert later.humanize(self.now, only_distance=True) == "2 years"
 
-        arw = arrow.Arrow(2014, 7, 2)
+        arw = strelki.Arrow(2014, 7, 2)
 
         result = arw.humanize(self.datetime)
 
         assert result == "in a year"
 
-    def test_arrow(self):
-        arw = arrow.Arrow.fromdatetime(self.datetime)
+    def test_strelki(self):
+        arw = strelki.Arrow.fromdatetime(self.datetime)
 
-        result = arw.humanize(arrow.Arrow.fromdatetime(self.datetime))
+        result = arw.humanize(strelki.Arrow.fromdatetime(self.datetime))
 
         assert result == "just now"
 
     def test_datetime_tzinfo(self):
-        arw = arrow.Arrow.fromdatetime(self.datetime)
+        arw = strelki.Arrow.fromdatetime(self.datetime)
 
         result = arw.humanize(self.datetime.replace(tzinfo=tz.tzutc()))
 
         assert result == "just now"
 
     def test_other(self):
-        arw = arrow.Arrow.fromdatetime(self.datetime)
+        arw = strelki.Arrow.fromdatetime(self.datetime)
 
         with pytest.raises(TypeError):
             arw.humanize(object())
 
     def test_invalid_locale(self):
-        arw = arrow.Arrow.fromdatetime(self.datetime)
+        arw = strelki.Arrow.fromdatetime(self.datetime)
 
         with pytest.raises(ValueError):
             arw.humanize(locale="klingon")
 
     def test_none(self):
-        arw = arrow.Arrow.utcnow()
+        arw = strelki.Arrow.utcnow()
 
         result = arw.humanize()
 
@@ -2296,7 +2296,7 @@ class TestArrowHumanize:
 
     def test_week_limit(self):
         # regression test for issue #848
-        arw = arrow.Arrow.utcnow()
+        arw = strelki.Arrow.utcnow()
 
         later = arw.shift(weeks=+1)
 
@@ -2305,17 +2305,17 @@ class TestArrowHumanize:
         assert result == "a week ago"
 
     def test_untranslated_granularity(self, mocker):
-        arw = arrow.Arrow.utcnow()
+        arw = strelki.Arrow.utcnow()
         later = arw.shift(weeks=1)
 
         # simulate an untranslated timeframe key
-        mocker.patch.dict("arrow.locales.EnglishLocale.timeframes")
-        del arrow.locales.EnglishLocale.timeframes["week"]
+        mocker.patch.dict("strelki.locales.EnglishLocale.timeframes")
+        del strelki.locales.EnglishLocale.timeframes["week"]
         with pytest.raises(ValueError):
             arw.humanize(later, granularity="week")
 
     def test_empty_granularity_list(self):
-        arw = arrow.Arrow(2013, 1, 1, 0, 0, 0)
+        arw = strelki.Arrow(2013, 1, 1, 0, 0, 0)
         later = arw.shift(seconds=55000)
 
         with pytest.raises(ValueError):
@@ -2327,13 +2327,13 @@ class TestArrowHumanize:
     # is truncated on call
 
     def test_no_floats(self):
-        arw = arrow.Arrow(2013, 1, 1, 0, 0, 0)
+        arw = strelki.Arrow(2013, 1, 1, 0, 0, 0)
         later = arw.shift(seconds=55000)
         humanize_string = arw.humanize(later, locale="bg", granularity="minute")
         assert humanize_string == "916 минути назад"
 
     def test_no_floats_multi_gran(self):
-        arw = arrow.Arrow(2013, 1, 1, 0, 0, 0)
+        arw = strelki.Arrow(2013, 1, 1, 0, 0, 0)
         later = arw.shift(seconds=55000)
         humanize_string = arw.humanize(
             later, locale="bg", granularity=["second", "minute"]
@@ -2342,22 +2342,22 @@ class TestArrowHumanize:
 
 
 @pytest.mark.usefixtures("time_2013_01_01")
-class TestArrowHumanizeTestsWithLocale:
+class TestStrelkiHumanizeTestsWithLocale:
     def test_now(self):
-        arw = arrow.Arrow(2013, 1, 1, 0, 0, 0)
+        arw = strelki.Arrow(2013, 1, 1, 0, 0, 0)
 
         result = arw.humanize(self.datetime, locale="ru")
 
         assert result == "сейчас"
 
     def test_seconds(self):
-        arw = arrow.Arrow(2013, 1, 1, 0, 0, 44)
+        arw = strelki.Arrow(2013, 1, 1, 0, 0, 44)
 
         result = arw.humanize(self.datetime, locale="ru")
         assert result == "через 44 секунды"
 
     def test_years(self):
-        arw = arrow.Arrow(2011, 7, 2)
+        arw = strelki.Arrow(2011, 7, 2)
 
         result = arw.humanize(self.datetime, locale="ru")
 
@@ -2605,10 +2605,10 @@ def slavic_locales() -> List[str]:
     return tested_langs
 
 
-class TestArrowDehumanize:
+class TestStrelkiDehumanize:
     def test_now(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 6, 18, 5, 55, 0)
+            arw = strelki.Arrow(2000, 6, 18, 5, 55, 0)
             second_ago = arw.shift(seconds=-1)
             second_future = arw.shift(seconds=1)
 
@@ -2624,7 +2624,7 @@ class TestArrowDehumanize:
 
     def test_seconds(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 6, 18, 5, 55, 0)
+            arw = strelki.Arrow(2000, 6, 18, 5, 55, 0)
             second_ago = arw.shift(seconds=-5)
             second_future = arw.shift(seconds=5)
 
@@ -2640,7 +2640,7 @@ class TestArrowDehumanize:
 
     def test_minute(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2001, 6, 18, 5, 55, 0)
+            arw = strelki.Arrow(2001, 6, 18, 5, 55, 0)
             minute_ago = arw.shift(minutes=-1)
             minute_future = arw.shift(minutes=1)
 
@@ -2656,7 +2656,7 @@ class TestArrowDehumanize:
 
     def test_minutes(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2007, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2007, 1, 10, 5, 55, 0)
             minute_ago = arw.shift(minutes=-5)
             minute_future = arw.shift(minutes=5)
 
@@ -2672,7 +2672,7 @@ class TestArrowDehumanize:
 
     def test_hour(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2009, 4, 20, 5, 55, 0)
+            arw = strelki.Arrow(2009, 4, 20, 5, 55, 0)
             hour_ago = arw.shift(hours=-1)
             hour_future = arw.shift(hours=1)
 
@@ -2686,7 +2686,7 @@ class TestArrowDehumanize:
 
     def test_hours(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2010, 2, 16, 7, 55, 0)
+            arw = strelki.Arrow(2010, 2, 16, 7, 55, 0)
             hour_ago = arw.shift(hours=-3)
             hour_future = arw.shift(hours=3)
 
@@ -2700,7 +2700,7 @@ class TestArrowDehumanize:
 
     def test_week(self, locale_list_with_weeks: List[str]):
         for lang in locale_list_with_weeks:
-            arw = arrow.Arrow(2012, 2, 18, 1, 52, 0)
+            arw = strelki.Arrow(2012, 2, 18, 1, 52, 0)
             week_ago = arw.shift(weeks=-1)
             week_future = arw.shift(weeks=1)
 
@@ -2714,7 +2714,7 @@ class TestArrowDehumanize:
 
     def test_weeks(self, locale_list_with_weeks: List[str]):
         for lang in locale_list_with_weeks:
-            arw = arrow.Arrow(2020, 3, 18, 5, 3, 0)
+            arw = strelki.Arrow(2020, 3, 18, 5, 3, 0)
             week_ago = arw.shift(weeks=-7)
             week_future = arw.shift(weeks=7)
 
@@ -2728,7 +2728,7 @@ class TestArrowDehumanize:
 
     def test_year(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2000, 1, 10, 5, 55, 0)
             year_ago = arw.shift(years=-1)
             year_future = arw.shift(years=1)
 
@@ -2742,7 +2742,7 @@ class TestArrowDehumanize:
 
     def test_years(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2000, 1, 10, 5, 55, 0)
             year_ago = arw.shift(years=-10)
             year_future = arw.shift(years=10)
 
@@ -2756,7 +2756,7 @@ class TestArrowDehumanize:
 
     def test_gt_than_10_years(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2000, 1, 10, 5, 55, 0)
             year_ago = arw.shift(years=-25)
             year_future = arw.shift(years=25)
 
@@ -2770,7 +2770,7 @@ class TestArrowDehumanize:
 
     def test_mixed_granularity(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2000, 1, 10, 5, 55, 0)
             past = arw.shift(hours=-1, minutes=-1, seconds=-1)
             future = arw.shift(hours=1, minutes=1, seconds=1)
 
@@ -2786,7 +2786,7 @@ class TestArrowDehumanize:
 
     def test_mixed_granularity_hours(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2000, 1, 10, 5, 55, 0)
             past = arw.shift(hours=-3, minutes=-1, seconds=-15)
             future = arw.shift(hours=3, minutes=1, seconds=15)
 
@@ -2802,7 +2802,7 @@ class TestArrowDehumanize:
 
     def test_mixed_granularity_day(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2000, 1, 10, 5, 55, 0)
             past = arw.shift(days=-3, minutes=-1, seconds=-15)
             future = arw.shift(days=3, minutes=1, seconds=15)
 
@@ -2818,7 +2818,7 @@ class TestArrowDehumanize:
 
     def test_mixed_granularity_day_hour(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 1, 10, 5, 55, 0)
+            arw = strelki.Arrow(2000, 1, 10, 5, 55, 0)
             past = arw.shift(days=-3, hours=-23, seconds=-15)
             future = arw.shift(days=3, hours=23, seconds=15)
 
@@ -2834,7 +2834,7 @@ class TestArrowDehumanize:
 
     # Test to make sure unsupported locales error out
     def test_unsupported_locale(self):
-        arw = arrow.Arrow(2000, 6, 18, 5, 55, 0)
+        arw = strelki.Arrow(2000, 6, 18, 5, 55, 0)
         second_ago = arw.shift(seconds=-5)
         second_future = arw.shift(seconds=5)
 
@@ -2854,7 +2854,7 @@ class TestArrowDehumanize:
 
     # Test to ensure old style locale strings are supported
     def test_normalized_locale(self):
-        arw = arrow.Arrow(2000, 6, 18, 5, 55, 0)
+        arw = strelki.Arrow(2000, 6, 18, 5, 55, 0)
         second_ago = arw.shift(seconds=-5)
         second_future = arw.shift(seconds=5)
 
@@ -2871,7 +2871,7 @@ class TestArrowDehumanize:
     # Ensures relative units are required in string
     def test_require_relative_unit(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 6, 18, 5, 55, 0)
+            arw = strelki.Arrow(2000, 6, 18, 5, 55, 0)
             second_ago = arw.shift(seconds=-5)
             second_future = arw.shift(seconds=5)
 
@@ -2891,7 +2891,7 @@ class TestArrowDehumanize:
     # Test for scrambled input
     def test_scrambled_input(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 6, 18, 5, 55, 0)
+            arw = strelki.Arrow(2000, 6, 18, 5, 55, 0)
             second_ago = arw.shift(seconds=-5)
             second_future = arw.shift(seconds=5)
 
@@ -2917,7 +2917,7 @@ class TestArrowDehumanize:
 
     def test_no_units_modified(self, locale_list_no_weeks: List[str]):
         for lang in locale_list_no_weeks:
-            arw = arrow.Arrow(2000, 6, 18, 5, 55, 0)
+            arw = strelki.Arrow(2000, 6, 18, 5, 55, 0)
 
             # Ensures we pass the first stage of checking whether relative units exist
             locale_obj = locales.get_locale(lang)
@@ -2945,7 +2945,7 @@ class TestArrowDehumanize:
         # Only need to test on seconds as logic holds for all slavic plural units
         for lang in slavic_locales:
             for unit in units:
-                arw = arrow.Arrow(2000, 2, 18, 1, 50, 30)
+                arw = strelki.Arrow(2000, 2, 18, 1, 50, 30)
 
                 past = arw.shift(minutes=-1 * unit, days=-1)
                 future = arw.shift(minutes=unit, days=1)
@@ -2972,7 +2972,7 @@ class TestArrowDehumanize:
         # Only need to test on seconds as logic holds for all slavic plural units
         for lang in ["cs"]:
             for unit in units:
-                arw = arrow.Arrow(2000, 2, 18, 1, 50, 30)
+                arw = strelki.Arrow(2000, 2, 18, 1, 50, 30)
 
                 past = arw.shift(minutes=-1 * unit, days=-1)
                 future = arw.shift(minutes=unit, days=1)
@@ -2988,59 +2988,59 @@ class TestArrowDehumanize:
                 assert arw.dehumanize(future_string, locale=lang) == future
 
 
-class TestArrowIsBetween:
+class TestStrelkiIsBetween:
     def test_start_before_end(self):
-        target = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-        start = arrow.Arrow.fromdatetime(datetime(2013, 5, 8))
-        end = arrow.Arrow.fromdatetime(datetime(2013, 5, 5))
+        target = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+        start = strelki.Arrow.fromdatetime(datetime(2013, 5, 8))
+        end = strelki.Arrow.fromdatetime(datetime(2013, 5, 5))
         assert not target.is_between(start, end)
 
     def test_exclusive_exclusive_bounds(self):
-        target = arrow.Arrow.fromdatetime(datetime(2013, 5, 5, 12, 30, 27))
-        start = arrow.Arrow.fromdatetime(datetime(2013, 5, 5, 12, 30, 10))
-        end = arrow.Arrow.fromdatetime(datetime(2013, 5, 5, 12, 30, 36))
+        target = strelki.Arrow.fromdatetime(datetime(2013, 5, 5, 12, 30, 27))
+        start = strelki.Arrow.fromdatetime(datetime(2013, 5, 5, 12, 30, 10))
+        end = strelki.Arrow.fromdatetime(datetime(2013, 5, 5, 12, 30, 36))
         assert target.is_between(start, end, "()")
 
     def test_exclusive_exclusive_bounds_same_date(self):
-        target = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-        start = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-        end = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
+        target = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+        start = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+        end = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
         assert not target.is_between(start, end, "()")
 
     def test_inclusive_exclusive_bounds(self):
-        target = arrow.Arrow.fromdatetime(datetime(2013, 5, 6))
-        start = arrow.Arrow.fromdatetime(datetime(2013, 5, 4))
-        end = arrow.Arrow.fromdatetime(datetime(2013, 5, 6))
+        target = strelki.Arrow.fromdatetime(datetime(2013, 5, 6))
+        start = strelki.Arrow.fromdatetime(datetime(2013, 5, 4))
+        end = strelki.Arrow.fromdatetime(datetime(2013, 5, 6))
         assert not target.is_between(start, end, "[)")
 
     def test_exclusive_inclusive_bounds(self):
-        target = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-        start = arrow.Arrow.fromdatetime(datetime(2013, 5, 5))
-        end = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
+        target = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+        start = strelki.Arrow.fromdatetime(datetime(2013, 5, 5))
+        end = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
         assert target.is_between(start, end, "(]")
 
     def test_inclusive_inclusive_bounds_same_date(self):
-        target = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-        start = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-        end = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
+        target = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+        start = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+        end = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
         assert target.is_between(start, end, "[]")
 
     def test_inclusive_inclusive_bounds_target_before_start(self):
-        target = arrow.Arrow.fromdatetime(datetime(2020, 12, 24))
-        start = arrow.Arrow.fromdatetime(datetime(2020, 12, 25))
-        end = arrow.Arrow.fromdatetime(datetime(2020, 12, 26))
+        target = strelki.Arrow.fromdatetime(datetime(2020, 12, 24))
+        start = strelki.Arrow.fromdatetime(datetime(2020, 12, 25))
+        end = strelki.Arrow.fromdatetime(datetime(2020, 12, 26))
         assert not target.is_between(start, end, "[]")
 
     def test_type_error_exception(self):
         with pytest.raises(TypeError):
-            target = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
+            target = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
             start = datetime(2013, 5, 5)
-            end = arrow.Arrow.fromdatetime(datetime(2013, 5, 8))
+            end = strelki.Arrow.fromdatetime(datetime(2013, 5, 8))
             target.is_between(start, end)
 
         with pytest.raises(TypeError):
-            target = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-            start = arrow.Arrow.fromdatetime(datetime(2013, 5, 5))
+            target = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+            start = strelki.Arrow.fromdatetime(datetime(2013, 5, 5))
             end = datetime(2013, 5, 8)
             target.is_between(start, end)
 
@@ -3048,9 +3048,9 @@ class TestArrowIsBetween:
             target.is_between(None, None)
 
     def test_value_error_exception(self):
-        target = arrow.Arrow.fromdatetime(datetime(2013, 5, 7))
-        start = arrow.Arrow.fromdatetime(datetime(2013, 5, 5))
-        end = arrow.Arrow.fromdatetime(datetime(2013, 5, 8))
+        target = strelki.Arrow.fromdatetime(datetime(2013, 5, 7))
+        start = strelki.Arrow.fromdatetime(datetime(2013, 5, 5))
+        end = strelki.Arrow.fromdatetime(datetime(2013, 5, 8))
         with pytest.raises(ValueError):
             target.is_between(start, end, "][")
         with pytest.raises(ValueError):
@@ -3065,18 +3065,18 @@ class TestArrowIsBetween:
             target.span("week", week_start=55)
 
 
-class TestArrowUtil:
+class TestStrelkiUtil:
     def test_get_datetime(self):
-        get_datetime = arrow.Arrow._get_datetime
+        get_datetime = strelki.Arrow._get_datetime
 
-        arw = arrow.Arrow.utcnow()
+        arw = strelki.Arrow.utcnow()
         dt = datetime.now(timezone.utc)
         timestamp = time.time()
 
         assert get_datetime(arw) == arw.datetime
         assert get_datetime(dt) == dt
         assert (
-            get_datetime(timestamp) == arrow.Arrow.utcfromtimestamp(timestamp).datetime
+            get_datetime(timestamp) == strelki.Arrow.utcfromtimestamp(timestamp).datetime
         )
 
         with pytest.raises(ValueError) as raise_ctx:
@@ -3084,16 +3084,16 @@ class TestArrowUtil:
         assert "not recognized as a datetime or timestamp" in str(raise_ctx.value)
 
     def test_get_tzinfo(self):
-        get_tzinfo = arrow.Arrow._get_tzinfo
+        get_tzinfo = strelki.Arrow._get_tzinfo
 
         with pytest.raises(ValueError) as raise_ctx:
             get_tzinfo("abc")
         assert "not recognized as a timezone" in str(raise_ctx.value)
 
     def test_get_iteration_params(self):
-        assert arrow.Arrow._get_iteration_params("end", None) == ("end", sys.maxsize)
-        assert arrow.Arrow._get_iteration_params(None, 100) == (arrow.Arrow.max, 100)
-        assert arrow.Arrow._get_iteration_params(100, 120) == (100, 120)
+        assert strelki.Arrow._get_iteration_params("end", None) == ("end", sys.maxsize)
+        assert strelki.Arrow._get_iteration_params(None, 100) == (strelki.Arrow.max, 100)
+        assert strelki.Arrow._get_iteration_params(100, 120) == (100, 120)
 
         with pytest.raises(ValueError):
-            arrow.Arrow._get_iteration_params(None, None)
+            strelki.Arrow._get_iteration_params(None, None)

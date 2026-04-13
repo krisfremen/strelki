@@ -7,12 +7,12 @@ import sys
 sys.path.insert(0, os.path.abspath(".."))
 
 about = {}
-with open("../arrow/_version.py", encoding="utf-8") as f:
+with open("../strelki/_version.py", encoding="utf-8") as f:
     exec(f.read(), about)
 
 # -- Project information -----------------------------------------------------
 
-project = "Arrow 🏹"
+project = "Strelki"
 copyright = "2023, Chris Smith"
 author = "Chris Smith"
 
@@ -48,8 +48,8 @@ html_show_copyright = True
 
 html_context = {
     "display_github": True,
-    "github_user": "arrow-py",
-    "github_repo": "arrow",
+    "github_user": "krisfremen",
+    "github_repo": "strelki",
     "github_version": "master/docs/",
 }
 

@@ -1,4 +1,4 @@
-"""Provides the :class:`Arrow <arrow.parser.DateTimeParser>` class, a better way to parse datetime strings."""
+"""Provides the :class:`Arrow <strelki.parser.DateTimeParser>` class, a better way to parse datetime strings."""
 
 import re
 from datetime import datetime, timedelta, timezone
@@ -28,9 +28,9 @@ try:
 except ImportError:
     from backports.zoneinfo import ZoneInfo, ZoneInfoNotFoundError  # type: ignore[import-not-found, no-redef]
 
-from arrow import locales
-from arrow.constants import DEFAULT_LOCALE
-from arrow.util import next_weekday, normalize_timestamp
+from strelki import locales
+from strelki.constants import DEFAULT_LOCALE
+from strelki.util import next_weekday, normalize_timestamp
 
 
 class ParserError(ValueError):
@@ -140,10 +140,10 @@ class _Parts(TypedDict, total=False):
 
 
 class DateTimeParser:
-    """A :class:`DateTimeParser <arrow.arrow.parser>` object
+    """A :class:`DateTimeParser <strelki.strelki.parser>` object
 
     Contains the regular expressions and functions to parse and split the input strings into tokens and eventually
-    produce a datetime that is used by :class:`Arrow <arrow.arrow.Arrow>` internally.
+    produce a datetime that is used by :class:`Arrow <strelki.strelki.Arrow>` internally.
 
     :param locale: the locale string
     :param cache_size: the size of the LRU cache used for regular expressions. Defaults to 0.
@@ -209,7 +209,7 @@ class DateTimeParser:
     def __init__(self, locale: str = DEFAULT_LOCALE, cache_size: int = 0) -> None:
         """
         Contains the regular expressions and functions to parse and split the input strings into tokens and eventually
-        produce a datetime that is used by :class:`Arrow <arrow.arrow.Arrow>` internally.
+        produce a datetime that is used by :class:`Arrow <strelki.strelki.Arrow>` internally.
 
         :param locale: the locale string
         :type locale: str
@@ -264,8 +264,8 @@ class DateTimeParser:
         :raises ParserError: If the datetime string is not in a valid ISO 8601-like format.
 
         Usage::
-        >>> import arrow.parser
-        >>> arrow.parser.DateTimeParser().parse_iso('2021-10-12T14:30:00')
+        >>> import strelki.parser
+        >>> strelki.parser.DateTimeParser().parse_iso('2021-10-12T14:30:00')
         datetime.datetime(2021, 10, 12, 14, 30)
 
         """
@@ -391,8 +391,8 @@ class DateTimeParser:
 
         Usage::
 
-        >>> import arrow.parser
-        >>> arrow.parser.DateTimeParser().parse('2021-10-12 14:30:00', 'YYYY-MM-DD HH:mm:ss')
+        >>> import strelki.parser
+        >>> strelki.parser.DateTimeParser().parse('2021-10-12 14:30:00', 'YYYY-MM-DD HH:mm:ss')
         datetime.datetime(2021, 10, 12, 14, 30)
 
 

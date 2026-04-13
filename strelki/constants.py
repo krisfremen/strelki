@@ -1,4 +1,4 @@
-"""Constants used internally in arrow."""
+"""Constants used internally in strelki."""
 
 import sys
 from datetime import datetime

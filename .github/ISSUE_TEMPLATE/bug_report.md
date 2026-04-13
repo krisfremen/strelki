@@ -24,4 +24,4 @@ Be sure to include details such as the expected and actual outcomes.
 
 - 🖥  **OS name and version**: <!-- Replace with OS name and version (e.g. macOS 10.15.7). -->
 - 🐍  **Python version**: <!-- Replace with Python version (e.g. Python 3.8.5). -->
-- 🏹  **Arrow version**: <!-- Replace with Arrow version. Run arrow.__version__ to find out! -->
+- 🏹  **Strelki version**: <!-- Replace with Strelki version. Run strelki.__version__ to find out! -->

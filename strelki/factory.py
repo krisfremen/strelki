@@ -1,6 +1,6 @@
 """
-Implements the :class:`ArrowFactory <arrow.factory.ArrowFactory>` class,
-providing factory methods for common :class:`Arrow <arrow.arrow.Arrow>`
+Implements the :class:`ArrowFactory <strelki.factory.ArrowFactory>` class,
+providing factory methods for common :class:`Arrow <strelki.strelki.Arrow>`
 construction scenarios.
 
 """
@@ -12,17 +12,17 @@ from decimal import Decimal
 from time import struct_time
 from typing import Any, List, Optional, Tuple, Type, Union, overload
 
-from arrow import parser
-from arrow.arrow import TZ_EXPR, Arrow
-from arrow.constants import DEFAULT_LOCALE
-from arrow.util import is_timestamp, iso_to_gregorian
+from strelki import parser
+from strelki.strelki import TZ_EXPR, Arrow
+from strelki.constants import DEFAULT_LOCALE
+from strelki.util import is_timestamp, iso_to_gregorian
 
 
 class ArrowFactory:
-    """A factory for generating :class:`Arrow <arrow.arrow.Arrow>` objects.
+    """A factory for generating :class:`Arrow <strelki.strelki.Arrow>` objects.
 
-    :param type: (optional) the :class:`Arrow <arrow.arrow.Arrow>`-based class to construct from.
-        Defaults to :class:`Arrow <arrow.arrow.Arrow>`.
+    :param type: (optional) the :class:`Arrow <strelki.strelki.Arrow>`-based class to construct from.
+        Defaults to :class:`Arrow <strelki.strelki.Arrow>`.
 
     """
 
@@ -83,7 +83,7 @@ class ArrowFactory:
     ) -> Arrow: ...  # pragma: no cover
 
     def get(self, *args: Any, **kwargs: Any) -> Arrow:
-        """Returns an :class:`Arrow <arrow.arrow.Arrow>` object based on flexible inputs.
+        """Returns an :class:`Arrow <strelki.strelki.Arrow>` object based on flexible inputs.
 
         :param locale: (optional) a ``str`` specifying a locale for the parser. Defaults to 'en-us'.
         :param tzinfo: (optional) a :ref:`timezone expression <tz-expr>` or tzinfo object.
@@ -95,93 +95,93 @@ class ArrowFactory:
 
         Usage::
 
-            >>> import arrow
+            >>> import strelki
 
         **No inputs** to get current UTC time::
 
-            >>> arrow.get()
+            >>> strelki.get()
             <Arrow [2013-05-08T05:51:43.316458+00:00]>
 
-        **One** :class:`Arrow <arrow.arrow.Arrow>` object, to get a copy.
+        **One** :class:`Arrow <strelki.strelki.Arrow>` object, to get a copy.
 
-            >>> arw = arrow.utcnow()
-            >>> arrow.get(arw)
+            >>> arw = strelki.utcnow()
+            >>> strelki.get(arw)
             <Arrow [2013-10-23T15:21:54.354846+00:00]>
 
         **One** ``float`` or ``int``, convertible to a floating-point timestamp, to get
         that timestamp in UTC::
 
-            >>> arrow.get(1367992474.293378)
+            >>> strelki.get(1367992474.293378)
             <Arrow [2013-05-08T05:54:34.293378+00:00]>
 
-            >>> arrow.get(1367992474)
+            >>> strelki.get(1367992474)
             <Arrow [2013-05-08T05:54:34+00:00]>
 
         **One** ISO 8601-formatted ``str``, to parse it::
 
-            >>> arrow.get('2013-09-29T01:26:43.830580')
+            >>> strelki.get('2013-09-29T01:26:43.830580')
             <Arrow [2013-09-29T01:26:43.830580+00:00]>
 
         **One** ISO 8601-formatted ``str``, in basic format, to parse it::
 
-            >>> arrow.get('20160413T133656.456289')
+            >>> strelki.get('20160413T133656.456289')
             <Arrow [2016-04-13T13:36:56.456289+00:00]>
 
         **One** ``tzinfo``, to get the current time **converted** to that timezone::
 
-            >>> arrow.get(tz.tzlocal())
+            >>> strelki.get(tz.tzlocal())
             <Arrow [2013-05-07T22:57:28.484717-07:00]>
 
         **One** naive ``datetime``, to get that datetime in UTC::
 
-            >>> arrow.get(datetime(2013, 5, 5))
+            >>> strelki.get(datetime(2013, 5, 5))
             <Arrow [2013-05-05T00:00:00+00:00]>
 
         **One** aware ``datetime``, to get that datetime::
 
-            >>> arrow.get(datetime(2013, 5, 5, tzinfo=tz.tzlocal()))
+            >>> strelki.get(datetime(2013, 5, 5, tzinfo=tz.tzlocal()))
             <Arrow [2013-05-05T00:00:00-07:00]>
 
         **One** naive ``date``, to get that date in UTC::
 
-            >>> arrow.get(date(2013, 5, 5))
+            >>> strelki.get(date(2013, 5, 5))
             <Arrow [2013-05-05T00:00:00+00:00]>
 
         **One** time.struct time::
 
-            >>> arrow.get(gmtime(0))
+            >>> strelki.get(gmtime(0))
             <Arrow [1970-01-01T00:00:00+00:00]>
 
         **One** iso calendar ``tuple``, to get that week date in UTC::
 
-            >>> arrow.get((2013, 18, 7))
+            >>> strelki.get((2013, 18, 7))
             <Arrow [2013-05-05T00:00:00+00:00]>
 
         **Two** arguments, a naive or aware ``datetime``, and a replacement
         :ref:`timezone expression <tz-expr>`::
 
-            >>> arrow.get(datetime(2013, 5, 5), 'US/Pacific')
+            >>> strelki.get(datetime(2013, 5, 5), 'US/Pacific')
             <Arrow [2013-05-05T00:00:00-07:00]>
 
         **Two** arguments, a naive ``date``, and a replacement
         :ref:`timezone expression <tz-expr>`::
 
-            >>> arrow.get(date(2013, 5, 5), 'US/Pacific')
+            >>> strelki.get(date(2013, 5, 5), 'US/Pacific')
             <Arrow [2013-05-05T00:00:00-07:00]>
 
         **Two** arguments, both ``str``, to parse the first according to the format of the second::
 
-            >>> arrow.get('2013-05-05 12:30:45 America/Chicago', 'YYYY-MM-DD HH:mm:ss ZZZ')
+            >>> strelki.get('2013-05-05 12:30:45 America/Chicago', 'YYYY-MM-DD HH:mm:ss ZZZ')
             <Arrow [2013-05-05T12:30:45-05:00]>
 
         **Two** arguments, first a ``str`` to parse and second a ``list`` of formats to try::
 
-            >>> arrow.get('2013-05-05 12:30:45', ['MM/DD/YYYY', 'YYYY-MM-DD HH:mm:ss'])
+            >>> strelki.get('2013-05-05 12:30:45', ['MM/DD/YYYY', 'YYYY-MM-DD HH:mm:ss'])
             <Arrow [2013-05-05T12:30:45+00:00]>
 
         **Three or more** arguments, as for the direct constructor of an ``Arrow`` object::
 
-            >>> arrow.get(2013, 5, 5, 12, 30, 45)
+            >>> strelki.get(2013, 5, 5, 12, 30, 45)
             <Arrow [2013-05-05T12:30:45+00:00]>
 
         """
@@ -297,36 +297,36 @@ class ArrowFactory:
             return self.type(*args, **kwargs)
 
     def utcnow(self) -> Arrow:
-        """Returns an :class:`Arrow <arrow.arrow.Arrow>` object, representing "now" in UTC time.
+        """Returns an :class:`Arrow <strelki.strelki.Arrow>` object, representing "now" in UTC time.
 
         Usage::
 
-            >>> import arrow
-            >>> arrow.utcnow()
+            >>> import strelki
+            >>> strelki.utcnow()
             <Arrow [2013-05-08T05:19:07.018993+00:00]>
         """
 
         return self.type.utcnow()
 
     def now(self, tz: Optional[TZ_EXPR] = None) -> Arrow:
-        """Returns an :class:`Arrow <arrow.arrow.Arrow>` object, representing "now" in the given
+        """Returns an :class:`Arrow <strelki.strelki.Arrow>` object, representing "now" in the given
         timezone.
 
         :param tz: (optional) A :ref:`timezone expression <tz-expr>`.  Defaults to local time.
 
         Usage::
 
-            >>> import arrow
-            >>> arrow.now()
+            >>> import strelki
+            >>> strelki.now()
             <Arrow [2013-05-07T22:19:11.363410-07:00]>
 
-            >>> arrow.now('US/Pacific')
+            >>> strelki.now('US/Pacific')
             <Arrow [2013-05-07T22:19:15.251821-07:00]>
 
-            >>> arrow.now('+02:00')
+            >>> strelki.now('+02:00')
             <Arrow [2013-05-08T07:19:25.618646+02:00]>
 
-            >>> arrow.now('local')
+            >>> strelki.now('local')
             <Arrow [2013-05-07T22:19:39.130059-07:00]>
         """
 
