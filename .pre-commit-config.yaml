@@ -12,8 +12,6 @@ repos:
       - id: check-builtin-literals
       - id: debug-statements
       - id: end-of-file-fixer
-      - id: requirements-txt-fixer
-        args: [requirements/requirements.txt, requirements/requirements-docs.txt, requirements/requirements-tests.txt]
       - id: trailing-whitespace
   - repo: https://github.com/timothycrosley/isort
     rev: 7.0.0

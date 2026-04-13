@@ -125,7 +125,7 @@ Contributions are welcome for both code and localizations (adding and updating l
 #. Find an issue or feature to tackle on the `issue tracker <https://github.com/krisfremen/strelki/issues>`_. Issues marked with the `"good first issue" label <https://github.com/krisfremen/strelki/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_ may be a great place to start!
 #. Fork `this repository <https://github.com/krisfremen/strelki>`_ on GitHub and begin making changes in a branch.
 #. Add a few tests to ensure that the bug was fixed or the feature works as expected.
-#. Run the entire test suite and linting checks by running one of the following commands: ``tox && tox -e lint,docs`` (if you have `tox <https://tox.readthedocs.io>`_ installed) **OR** ``make build39 && make test && make lint`` (if you do not have Python 3.9 installed, replace ``build39`` with the latest Python version on your system).
+#. Run the development environment and checks with ``uv sync --all-extras && uv run pytest && uv run pre-commit run --all-files --show-diff-on-failure && uv run --directory docs make html``.
 #. Submit a pull request and await feedback 😃.
 
 If you have any questions along the way, feel free to ask them `here <https://github.com/krisfremen/strelki/discussions>`_.

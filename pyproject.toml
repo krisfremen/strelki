@@ -51,6 +51,7 @@ test = [
     "pytest-mock",
     "pytz==2025.2",
     "simplejson==3.*",
+    "types-python-dateutil>=2.8.10",
 ]
 doc = [
     "doc8",
@@ -67,3 +68,12 @@ Issues = "https://github.com/krisfremen/strelki/issues"
 
 [tool.flit.module]
 name = "strelki"
+
+[tool.pytest.ini_options]
+addopts = "-v --cov-branch --cov=strelki --cov-fail-under=99 --cov-report=term-missing --cov-report=xml --junitxml=junit.xml -o junit_family=legacy"
+testpaths = ["tests"]
+
+[tool.isort]
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
