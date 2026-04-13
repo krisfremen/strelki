@@ -32,6 +32,8 @@ Strelki: Better dates & times for Python
 
 Strelki is plural for arrow in Macedonian. Strelki takes its name from the `arrow of time <https://en.wikipedia.org/wiki/Arrow_of_time>`_ and is heavily inspired by `moment.js <https://github.com/moment/moment>`_ and `requests <https://github.com/psf/requests>`_.
 
+Strelki is an experimental fork for testing new ideas. Upstream `Arrow <https://github.com/arrow-py/arrow>`_ should still be your default choice unless you specifically need features that are experimental and only implemented here.
+
 Why use Strelki over built-in modules?
 ------------------------------------
 
