@@ -4,10 +4,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath(".."))
-
-about = {}
-with open("../strelki/_version.py", encoding="utf-8") as f:
-    exec(f.read(), about)
+import strelki
 
 # -- Project information -----------------------------------------------------
 
@@ -15,7 +12,7 @@ project = "Strelki"
 copyright = "2023, Chris Smith"
 author = "Chris Smith"
 
-release = about["__version__"]
+release = strelki.__version__
 
 # -- General configuration ---------------------------------------------------
 

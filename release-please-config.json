@@ -6,7 +6,7 @@
   "packages": {
     ".": {
       "release-type": "python",
-      "version-file": "strelki/_version.py"
+      "version-file": "strelki/__init__.py"
     }
   }
 }
