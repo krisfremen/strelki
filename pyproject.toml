@@ -49,7 +49,7 @@ test = [
     "pytest",
     "pytest-cov",
     "pytest-mock",
-    "pytz==2025.2",
+    "pytz==2026.1",
     "ruff",
     "simplejson==3.*",
     "ty",
@@ -76,12 +76,12 @@ addopts = "-v --cov-branch --cov=strelki --cov-fail-under=99 --cov-report=term-m
 testpaths = ["tests"]
 
 [tool.ruff]
-line_length = 88
+line-length = 88
 target-version = "py38"
 
 [tool.ruff.lint]
 select = ["ANN", "B", "E", "F", "I", "UP", "W"]
-ignore = ["ANN101", "ANN102", "ANN401", "E501", "W503"]
+ignore = ["ANN401", "E501"]
 
 [tool.ruff.lint.per-file-ignores]
 "strelki/__init__.py" = ["F401"]
@@ -89,3 +89,6 @@ ignore = ["ANN101", "ANN102", "ANN401", "E501", "W503"]
 
 [tool.ty.src]
 include = ["strelki"]
+
+[tool.ty.environment]
+python-version = "3.9"

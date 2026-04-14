@@ -39,6 +39,14 @@ TimeFrameLiteral = Literal[
 _TimeFrameElements = Union[
     str, Sequence[str], Mapping[str, str], Mapping[str, Sequence[str]]
 ]
+_PastFutureMapping = Mapping[Literal["past", "future"], str]
+_SlavicMapping = Mapping[Literal["singular", "dual", "plural"], str]
+_ArabicMapping = Mapping[Literal["2", "ten", "higher"], str]
+_CzechSlovakMapping = Mapping[
+    Literal["zero", "past", "future", "future-singular", "future-paucal"], str
+]
+_DoubleHigherMapping = Mapping[Literal["double", "higher"], str]
+_DualPluralMapping = Mapping[Literal["dual", "plural"], str]
 
 _locale_map: Dict[str, Type["Locale"]] = {}
 
@@ -935,10 +943,11 @@ class FinnishLocale(Locale):
         form = self.timeframes[timeframe]
 
         if isinstance(form, Mapping):
+            variants = cast(_PastFutureMapping, form)
             if delta < 0:
-                form = form["past"]
+                form = variants["past"]
             else:
-                form = form["future"]
+                form = variants["future"]
 
         return form.format(abs(delta))
 
@@ -1335,12 +1344,13 @@ class SlavicBaseLocale(Locale):
         delta = abs(delta)
 
         if isinstance(form, Mapping):
+            variants = cast(_SlavicMapping, form)
             if delta % 10 == 1 and delta % 100 != 11:
-                form = form["singular"]
+                form = variants["singular"]
             elif 2 <= delta % 10 <= 4 and (delta % 100 < 10 or delta % 100 >= 20):
-                form = form["dual"]
+                form = variants["dual"]
             else:
-                form = form["plural"]
+                form = variants["plural"]
 
         return form.format(delta)
 
@@ -2747,12 +2757,13 @@ class ArabicLocale(Locale):
         form = self.timeframes[timeframe]
         delta = abs(delta)
         if isinstance(form, Mapping):
+            variants = cast(_ArabicMapping, form)
             if delta == 2:
-                form = form["2"]
+                form = variants["2"]
             elif 2 < delta <= 10:
-                form = form["ten"]
+                form = variants["ten"]
             else:
-                form = form["higher"]
+                form = variants["higher"]
 
         return form.format(delta)
 
@@ -2898,10 +2909,11 @@ class IcelandicLocale(Locale):
         form = self.timeframes[timeframe]
 
         if isinstance(form, Mapping):
+            variants = cast(_PastFutureMapping, form)
             if delta < 0:
-                form = form["past"]
+                form = variants["past"]
             elif delta > 0:
-                form = form["future"]
+                form = variants["future"]
             else:
                 raise ValueError(
                     "Icelandic Locale does not support units with a delta of zero. "
@@ -3302,13 +3314,14 @@ class CzechLocale(Locale):
         if isinstance(form, str):
             return form.format(abs_delta)
 
+        variants = cast(_CzechSlovakMapping, form)
         if delta == 0:
             key = "zero"  # And *never* use 0 in the singular!
         elif delta < 0:
             key = "past"
         else:
             # Needed since both regular future and future-singular and future-paucal cases
-            if "future-singular" not in form:
+            if "future-singular" not in variants:
                 key = "future"
             elif 2 <= abs_delta % 10 <= 4 and (
                 abs_delta % 100 < 10 or abs_delta % 100 >= 20
@@ -3317,7 +3330,7 @@ class CzechLocale(Locale):
             else:
                 key = "future-paucal"
 
-        form: str = form[key]
+        form = variants[key]
         return form.format(abs_delta)
 
 
@@ -3433,12 +3446,13 @@ class SlovakLocale(Locale):
         if isinstance(form, str):
             return form.format(abs_delta)
 
+        variants = cast(_CzechSlovakMapping, form)
         if delta == 0:
             key = "zero"  # And *never* use 0 in the singular!
         elif delta < 0:
             key = "past"
         else:
-            if "future-singular" not in form:
+            if "future-singular" not in variants:
                 key = "future"
             elif 2 <= abs_delta % 10 <= 4 and (
                 abs_delta % 100 < 10 or abs_delta % 100 >= 20
@@ -3447,7 +3461,7 @@ class SlovakLocale(Locale):
             else:
                 key = "future-paucal"
 
-        form: str = form[key]
+        form = variants[key]
         return form.format(abs_delta)
 
 
@@ -3607,12 +3621,13 @@ class HebrewLocale(Locale):
         form = self.timeframes[timeframe]
         delta = abs(delta)
         if isinstance(form, Mapping):
+            variants = cast(_ArabicMapping, form)
             if delta == 2:
-                form = form["2"]
+                form = variants["2"]
             elif delta == 0 or 2 < delta <= 10:
-                form = form["ten"]
+                form = variants["ten"]
             else:
-                form = form["higher"]
+                form = variants["higher"]
 
         return form.format(delta)
 
@@ -3928,10 +3943,11 @@ class HungarianLocale(Locale):
         form = self.timeframes[timeframe]
 
         if isinstance(form, Mapping):
+            variants = cast(_PastFutureMapping, form)
             if delta > 0:
-                form = form["future"]
+                form = variants["future"]
             else:
-                form = form["past"]
+                form = variants["past"]
 
         return form.format(abs(delta))
 
@@ -4716,10 +4732,11 @@ class EstonianLocale(Locale):
 
     def _format_timeframe(self, timeframe: TimeFrameLiteral, delta: int) -> str:
         form = self.timeframes[timeframe]
+        variants = cast(_PastFutureMapping, form)
         if delta > 0:
-            _form = form["future"]
+            _form = variants["future"]
         else:
-            _form = form["past"]
+            _form = variants["past"]
         return _form.format(abs(delta))
 
 
@@ -4970,10 +4987,11 @@ class CroatianLocale(Locale):
         form = self.timeframes[timeframe]
         delta = abs(delta)
         if isinstance(form, Mapping):
+            variants = cast(_DoubleHigherMapping, form)
             if 1 < delta <= 4:
-                form = form["double"]
+                form = variants["double"]
             else:
-                form = form["higher"]
+                form = variants["higher"]
 
         return form.format(delta)
 
@@ -5301,10 +5319,11 @@ class MalteseLocale(Locale):
         form = self.timeframes[timeframe]
         delta = abs(delta)
         if isinstance(form, Mapping):
+            variants = cast(_DualPluralMapping, form)
             if delta == 2:
-                form = form["dual"]
+                form = variants["dual"]
             else:
-                form = form["plural"]
+                form = variants["plural"]
 
         return form.format(delta)
 
@@ -5561,10 +5580,11 @@ class SerbianLocale(Locale):
         form = self.timeframes[timeframe]
         delta = abs(delta)
         if isinstance(form, Mapping):
+            variants = cast(_DoubleHigherMapping, form)
             if 1 < delta <= 4:
-                form = form["double"]
+                form = variants["double"]
             else:
-                form = form["higher"]
+                form = variants["higher"]
 
         return form.format(delta)
 
@@ -5705,11 +5725,12 @@ class ZuluLocale(Locale):
         if isinstance(form, str):
             return form.format(abs_delta)
 
+        variants = cast(_PastFutureMapping, form)
         if delta > 0:
             key = "future"
         else:
             key = "past"
-        form = form[key]
+        form = variants[key]
 
         return form.format(abs_delta)
 
@@ -6099,11 +6120,12 @@ class SinhalaLocale(Locale):
         if isinstance(form, str):
             return form.format(abs_delta)
 
+        variants = cast(_PastFutureMapping, form)
         if delta > 0:
             key = "future"
         else:
             key = "past"
-        form = form[key]
+        form = variants[key]
 
         return form.format(abs_delta)
 
@@ -6472,11 +6494,12 @@ class AmharicLocale(Locale):
         if isinstance(form, str):
             return form.format(abs_delta)
 
+        variants = cast(_PastFutureMapping, form)
         if delta > 0:
             key = "future"
         else:
             key = "past"
-        form = form[key]
+        form = variants[key]
 
         return form.format(abs_delta)
 

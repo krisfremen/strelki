@@ -30,7 +30,7 @@ def assert_timezone_equivalence(tz1, tz2, dt):
     assert tz1.tzname(dt) == tz2.tzname(dt)
 
     # Compare UTC offset and DST behavior at the given datetime
-    assert tz1.utcoffset(dt) == tz2.utcoffset(
-        dt
-    ), f"UTC offset mismatch: {tz1.utcoffset(dt)} != {tz2.utcoffset(dt)}"
+    assert tz1.utcoffset(dt) == tz2.utcoffset(dt), (
+        f"UTC offset mismatch: {tz1.utcoffset(dt)} != {tz2.utcoffset(dt)}"
+    )
     assert tz1.dst(dt) == tz2.dst(dt), f"DST mismatch: {tz1.dst(dt)} != {tz2.dst(dt)}"

@@ -73,6 +73,36 @@ _GRANULARITY = Literal[
     "quarter",
     "year",
 ]
+_HUMANIZE_GRANULARITY = Literal[
+    "second",
+    "minute",
+    "hour",
+    "day",
+    "week",
+    "month",
+    "quarter",
+    "year",
+]
+
+_PLURAL_GRANULARITY: Final[Mapping[_HUMANIZE_GRANULARITY, TimeFrameLiteral]] = {
+    "second": "seconds",
+    "minute": "minutes",
+    "hour": "hours",
+    "day": "days",
+    "week": "weeks",
+    "month": "months",
+    "quarter": "quarters",
+    "year": "years",
+}
+
+
+def _timeframe_for_granularity(
+    granularity: _HUMANIZE_GRANULARITY, delta: float
+) -> TimeFrameLiteral:
+    if trunc(abs(delta)) == 1:
+        return cast(TimeFrameLiteral, granularity)
+
+    return _PLURAL_GRANULARITY[granularity]
 
 
 class Arrow:
@@ -164,9 +194,10 @@ class Arrow:
             isinstance(tzinfo, dt_tzinfo)
             and hasattr(tzinfo, "localize")
             and hasattr(tzinfo, "zone")
-            and tzinfo.zone
         ):
-            tzinfo = parser.TzinfoParser.parse(tzinfo.zone)
+            zone_name = getattr(tzinfo, "zone", None)
+            if isinstance(zone_name, str) and zone_name:
+                tzinfo = parser.TzinfoParser.parse(zone_name)
         elif isinstance(tzinfo, str):
             tzinfo = parser.TzinfoParser.parse(tzinfo)
 
@@ -702,22 +733,22 @@ class Arrow:
         """
 
         tzinfo = cls._get_tzinfo(start.tzinfo if tz is None else tz)
-        start = cls.fromdatetime(start, tzinfo).span(frame, exact=exact)[0]
-        end = cls.fromdatetime(end, tzinfo)
-        _range = cls.range(frame, start, end, tz, limit)
+        start_arrow = cls.fromdatetime(start, tzinfo).span(frame, exact=exact)[0]
+        end_arrow = cls.fromdatetime(end, tzinfo)
+        _range = cls.range(frame, start_arrow, end_arrow, tz, limit)
         if not exact:
             for r in _range:
                 yield r.span(frame, bounds=bounds, exact=exact)
 
         for r in _range:
             floor, ceil = r.span(frame, bounds=bounds, exact=exact)
-            if ceil > end:
-                ceil = end
+            if ceil > end_arrow:
+                ceil = end_arrow
                 if bounds[1] == ")":
                     ceil += relativedelta(microseconds=-1)
-            if floor == end:
+            if floor == end_arrow:
                 break
-            elif floor + relativedelta(microseconds=-1) == end:
+            elif floor + relativedelta(microseconds=-1) == end_arrow:
                 break
             yield floor, ceil
 
@@ -1135,7 +1166,7 @@ class Arrow:
         other: Union["Arrow", dt_datetime, None] = None,
         locale: str = DEFAULT_LOCALE,
         only_distance: bool = False,
-        granularity: Union[_GRANULARITY, List[_GRANULARITY]] = "auto",
+        granularity: Union[_GRANULARITY, List[_HUMANIZE_GRANULARITY]] = "auto",
     ) -> str:
         """Returns a localized, humanized representation of a relative difference in time.
 
@@ -1159,7 +1190,7 @@ class Arrow:
         """
 
         locale_name = locale
-        locale = locales.get_locale(locale)
+        locale_obj = locales.get_locale(locale)
 
         if other is None:
             utc = dt_datetime.now(timezone.utc).replace(tzinfo=timezone.utc)
@@ -1180,39 +1211,48 @@ class Arrow:
                 "Argument must be of type None, Arrow, or datetime."
             )
 
+        granularity_value: Union[_GRANULARITY, _HUMANIZE_GRANULARITY, List[_HUMANIZE_GRANULARITY]]
         if isinstance(granularity, list) and len(granularity) == 1:
-            granularity = granularity[0]
+            granularity_value = granularity[0]
+        else:
+            granularity_value = granularity
 
         _delta = int(round((self._datetime - dt).total_seconds()))
         sign = -1 if _delta < 0 else 1
         delta_second = diff = abs(_delta)
 
         try:
-            if granularity == "auto":
+            if granularity_value == "auto":
                 if diff < 10:
-                    return locale.describe("now", only_distance=only_distance)
+                    return locale_obj.describe("now", only_distance=only_distance)
 
                 if diff < self._SECS_PER_MINUTE:
                     seconds = sign * delta_second
-                    return locale.describe(
+                    return locale_obj.describe(
                         "seconds", seconds, only_distance=only_distance
                     )
 
                 elif diff < self._SECS_PER_MINUTE * 2:
-                    return locale.describe("minute", sign, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "minute", sign, only_distance=only_distance
+                    )
 
                 elif diff < self._SECS_PER_HOUR:
                     minutes = sign * max(delta_second // self._SECS_PER_MINUTE, 2)
-                    return locale.describe(
+                    return locale_obj.describe(
                         "minutes", minutes, only_distance=only_distance
                     )
 
                 elif diff < self._SECS_PER_HOUR * 2:
-                    return locale.describe("hour", sign, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "hour", sign, only_distance=only_distance
+                    )
 
                 elif diff < self._SECS_PER_DAY:
                     hours = sign * max(delta_second // self._SECS_PER_HOUR, 2)
-                    return locale.describe("hours", hours, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "hours", hours, only_distance=only_distance
+                    )
 
                 calendar_diff = (
                     relativedelta(dt, self._datetime)
@@ -1230,57 +1270,61 @@ class Arrow:
                 calendar_months = min(calendar_months, self._MONTHS_PER_YEAR)
 
                 if diff < self._SECS_PER_DAY * 2:
-                    return locale.describe("day", sign, only_distance=only_distance)
+                    return locale_obj.describe("day", sign, only_distance=only_distance)
 
                 elif diff < self._SECS_PER_WEEK:
                     days = sign * max(delta_second // self._SECS_PER_DAY, 2)
-                    return locale.describe("days", days, only_distance=only_distance)
+                    return locale_obj.describe("days", days, only_distance=only_distance)
 
                 elif calendar_months >= 1 and diff < self._SECS_PER_YEAR:
                     if calendar_months == 1:
-                        return locale.describe(
+                        return locale_obj.describe(
                             "month", sign, only_distance=only_distance
                         )
                     else:
                         months = sign * calendar_months
-                        return locale.describe(
+                        return locale_obj.describe(
                             "months", months, only_distance=only_distance
                         )
 
                 elif diff < self._SECS_PER_WEEK * 2:
-                    return locale.describe("week", sign, only_distance=only_distance)
+                    return locale_obj.describe("week", sign, only_distance=only_distance)
 
                 elif diff < self._SECS_PER_MONTH:
                     weeks = sign * max(delta_second // self._SECS_PER_WEEK, 2)
-                    return locale.describe("weeks", weeks, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "weeks", weeks, only_distance=only_distance
+                    )
 
                 elif diff < self._SECS_PER_YEAR * 2:
-                    return locale.describe("year", sign, only_distance=only_distance)
+                    return locale_obj.describe("year", sign, only_distance=only_distance)
 
                 else:
                     years = sign * max(delta_second // self._SECS_PER_YEAR, 2)
-                    return locale.describe("years", years, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "years", years, only_distance=only_distance
+                    )
 
-            elif isinstance(granularity, str):
-                granularity = cast(TimeFrameLiteral, granularity)  # type: ignore[assignment]
+            elif isinstance(granularity_value, str):
+                single_granularity = granularity_value
 
-                if granularity == "second":
+                if single_granularity == "second":
                     delta = sign * float(delta_second)
                     if abs(delta) < 2:
-                        return locale.describe("now", only_distance=only_distance)
-                elif granularity == "minute":
+                        return locale_obj.describe("now", only_distance=only_distance)
+                elif single_granularity == "minute":
                     delta = sign * delta_second / self._SECS_PER_MINUTE
-                elif granularity == "hour":
+                elif single_granularity == "hour":
                     delta = sign * delta_second / self._SECS_PER_HOUR
-                elif granularity == "day":
+                elif single_granularity == "day":
                     delta = sign * delta_second / self._SECS_PER_DAY
-                elif granularity == "week":
+                elif single_granularity == "week":
                     delta = sign * delta_second / self._SECS_PER_WEEK
-                elif granularity == "month":
+                elif single_granularity == "month":
                     delta = sign * delta_second / self._SECS_PER_MONTH
-                elif granularity == "quarter":
+                elif single_granularity == "quarter":
                     delta = sign * delta_second / self._SECS_PER_QUARTER
-                elif granularity == "year":
+                elif single_granularity == "year":
                     delta = sign * delta_second / self._SECS_PER_YEAR
                 else:
                     raise ValueError(
@@ -1288,33 +1332,32 @@ class Arrow:
                         "Please select between 'second', 'minute', 'hour', 'day', 'week', 'month', 'quarter' or 'year'."
                     )
 
-                if trunc(abs(delta)) != 1:
-                    granularity += "s"  # type: ignore[assignment]
-                return locale.describe(granularity, delta, only_distance=only_distance)
+                timeframe = _timeframe_for_granularity(single_granularity, delta)
+                return locale_obj.describe(
+                    timeframe, delta, only_distance=only_distance
+                )
 
             else:
-                if not granularity:
+                if not granularity_value:
                     raise ValueError(
                         "Empty granularity list provided. "
                         "Please select one or more from 'second', 'minute', 'hour', 'day', 'week', 'month', 'quarter', 'year'."
                     )
 
+                granularity_list = granularity_value
                 timeframes: List[Tuple[TimeFrameLiteral, float]] = []
 
-                def gather_timeframes(_delta: float, _frame: TimeFrameLiteral) -> float:
-                    if _frame in granularity:
+                def gather_timeframes(
+                    _delta: float, _frame: _HUMANIZE_GRANULARITY
+                ) -> float:
+                    if _frame in granularity_list:
                         value = sign * _delta / self._SECS_MAP[_frame]
                         _delta %= self._SECS_MAP[_frame]
-                        if trunc(abs(value)) != 1:
-                            timeframes.append(
-                                (cast(TimeFrameLiteral, _frame + "s"), value)
-                            )
-                        else:
-                            timeframes.append((_frame, value))
+                        timeframes.append((_timeframe_for_granularity(_frame, value), value))
                     return _delta
 
                 delta = float(delta_second)
-                frames: Tuple[TimeFrameLiteral, ...] = (
+                frames: Tuple[_HUMANIZE_GRANULARITY, ...] = (
                     "year",
                     "quarter",
                     "month",
@@ -1327,19 +1370,21 @@ class Arrow:
                 for frame in frames:
                     delta = gather_timeframes(delta, frame)
 
-                if len(timeframes) < len(granularity):
+                if len(timeframes) < len(granularity_list):
                     raise ValueError(
                         "Invalid level of granularity. "
                         "Please select between 'second', 'minute', 'hour', 'day', 'week', 'month', 'quarter' or 'year'."
                     )
 
-                return locale.describe_multi(timeframes, only_distance=only_distance)
+                return locale_obj.describe_multi(
+                    timeframes, only_distance=only_distance
+                )
 
         except KeyError as e:
             raise ValueError(
                 f"Humanization of the {e} granularity is not currently translated in the {locale_name!r} locale. "
                 "Please consider making a contribution to this locale."
-            )
+            ) from e
 
     def dehumanize(self, input_string: str, locale: str = "en_us") -> "Arrow":
         """Returns a new :class:`Arrow <strelki.strelki.Arrow>` object, that represents
@@ -1398,9 +1443,9 @@ class Arrow:
         for unit, unit_object in locale_obj.timeframes.items():
             # Need to check the type of unit_object to create the correct dictionary
             if isinstance(unit_object, Mapping):
-                strings_to_search = unit_object
+                strings_to_search = cast(Mapping[str, str], unit_object)
             else:
-                strings_to_search = {unit: str(unit_object)}
+                strings_to_search: Mapping[str, str] = {unit: str(unit_object)}
 
             # Search for any matches that exist for that locale's unit.
             # Needs to cycle all through strings as some locales have strings that
@@ -1763,7 +1808,8 @@ class Arrow:
 
     def __sub__(self, other: Any) -> Union[timedelta, "Arrow"]:
         if isinstance(other, (timedelta, relativedelta)):
-            return self.fromdatetime(self._datetime - other, self._datetime.tzinfo)
+            shifted_datetime = cast(dt_datetime, self._datetime - other)
+            return self.fromdatetime(shifted_datetime, self._datetime.tzinfo)
 
         elif isinstance(other, dt_datetime):
             return self._datetime - other
@@ -1828,8 +1874,8 @@ class Arrow:
         else:
             try:
                 return parser.TzinfoParser.parse(tz_expr)
-            except parser.ParserError:
-                raise ValueError(f"{tz_expr!r} not recognized as a timezone.")
+            except parser.ParserError as e:
+                raise ValueError(f"{tz_expr!r} not recognized as a timezone.") from e
 
     @classmethod
     def _get_datetime(

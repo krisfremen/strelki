@@ -237,9 +237,7 @@ class TestDateTimeParserParse:
         # NOTE: timestamps cannot be parsed from natural language strings (by removing the ^...$) because it will
         # break cases like "15 Jul 2000" and a format list (see issue #447)
         with pytest.raises(ParserError):
-            natural_lang_string = "Meet me at {} at the restaurant.".format(
-                float_timestamp
-            )
+            natural_lang_string = f"Meet me at {float_timestamp} at the restaurant."
             self.parser.parse(natural_lang_string, "X")
 
         with pytest.raises(ParserError):
@@ -902,13 +900,11 @@ class TestDateTimeParserRegex:
         for sep in time_separators:
             assert time_re.findall("12") == [("12", "", "", "", "")]
             assert time_re.findall(f"12{sep}35") == [("12", "35", "", "", "")]
-            assert time_re.findall("12{sep}35{sep}46".format(sep=sep)) == [
-                ("12", "35", "46", "", "")
-            ]
-            assert time_re.findall("12{sep}35{sep}46.952313".format(sep=sep)) == [
+            assert time_re.findall(f"12{sep}35{sep}46") == [("12", "35", "46", "", "")]
+            assert time_re.findall(f"12{sep}35{sep}46.952313") == [
                 ("12", "35", "46", ".", "952313")
             ]
-            assert time_re.findall("12{sep}35{sep}46,952313".format(sep=sep)) == [
+            assert time_re.findall(f"12{sep}35{sep}46,952313") == [
                 ("12", "35", "46", ",", "952313")
             ]
 

@@ -1,6 +1,7 @@
 """Provides the :class:`Arrow <strelki.parser.DateTimeParser>` class, a better way to parse datetime strings."""
 
 import re
+import sys
 from datetime import datetime, timedelta, timezone
 from datetime import tzinfo as dt_tzinfo
 from functools import lru_cache
@@ -23,10 +24,13 @@ from typing import (
     overload,
 )
 
-try:
+if sys.version_info >= (3, 9):
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-except ImportError:
-    from backports.zoneinfo import ZoneInfo, ZoneInfoNotFoundError  # type: ignore[import-not-found, no-redef]
+else:
+    from backports.zoneinfo import (
+        ZoneInfo,
+        ZoneInfoNotFoundError,
+    )
 
 from strelki import locales
 from strelki.constants import DEFAULT_LOCALE
@@ -243,8 +247,8 @@ class DateTimeParser:
             }
         )
         if cache_size > 0:
-            self._generate_pattern_re = lru_cache(maxsize=cache_size)(  # type: ignore
-                self._generate_pattern_re
+            self._generate_pattern_re = cast(
+                Any, lru_cache(maxsize=cache_size)(self._generate_pattern_re)
             )
 
     # TODO: since we support more than ISO 8601, we should rename this function
@@ -348,11 +352,9 @@ class DateTimeParser:
             time_sep = "" if is_basic_time_format else ":"
 
             if has_subseconds:
-                time_string = "HH{time_sep}mm{time_sep}ss{subseconds_sep}S".format(
-                    time_sep=time_sep, subseconds_sep=subseconds_sep
-                )
+                time_string = f"HH{time_sep}mm{time_sep}ss{subseconds_sep}S"
             elif has_seconds:
-                time_string = "HH{time_sep}mm{time_sep}ss".format(time_sep=time_sep)
+                time_string = f"HH{time_sep}mm{time_sep}ss"
             elif has_minutes:
                 time_string = f"HH{time_sep}mm"
             else:
@@ -410,7 +412,7 @@ class DateTimeParser:
         except re.error as e:
             raise ParserMatchError(
                 f"Failed to generate regular expression pattern: {e}."
-            )
+            ) from e
 
         match = fmt_pattern_re.search(datetime_string)
 
@@ -434,7 +436,7 @@ class DateTimeParser:
                     f"Unable to find a match group for the specified token {token!r}."
                 )
 
-            self._parse_token(token, value, parts)  # type: ignore[arg-type]
+            self._parse_token(cast(Any, token), cast(Any, value), parts)
 
         return self._build_datetime(parts)
 
@@ -473,8 +475,8 @@ class DateTimeParser:
             token: _FORMAT_TYPE = cast(_FORMAT_TYPE, m.group(0))
             try:
                 input_re = self._input_re_map[token]
-            except KeyError:
-                raise ParserError(f"Unrecognized token {token!r}.")
+            except KeyError as e:
+                raise ParserError(f"Unrecognized token {token!r}.") from e
             input_pattern = f"(?P<{token}>{input_re.pattern})"
             tokens.append(token)
             # a pattern doesn't have the same length as the token
@@ -523,8 +525,8 @@ class DateTimeParser:
             # can appear after the pattern at most 1 time
             r"(?!\S))"  # Don't allow any non-whitespace character after the punctuation
         )
-        bounded_fmt_pattern = r"{}{}{}".format(
-            starting_word_boundary, final_fmt_pattern, ending_word_boundary
+        bounded_fmt_pattern = (
+            rf"{starting_word_boundary}{final_fmt_pattern}{ending_word_boundary}"
         )
 
         return tokens, re.compile(bounded_fmt_pattern, flags=re.IGNORECASE)
@@ -616,8 +618,10 @@ class DateTimeParser:
             parts["year"] = 1900 + value if value > 68 else 2000 + value
 
         elif token in ["MMMM", "MMM"]:
-            # FIXME: month_number() is nullable
-            parts["month"] = self.locale.month_number(value.lower())  # type: ignore[typeddict-item]
+            month_number = self.locale.month_number(value.lower())
+            if month_number is None:
+                raise ParserMatchError(f"Unable to parse month name {value!r}.")
+            parts["month"] = month_number
 
         elif token in ["MM", "M"]:
             parts["month"] = int(value)
@@ -753,10 +757,10 @@ class DateTimeParser:
             date_string = f"{_year}-{day_of_year}"
             try:
                 dt = datetime.strptime(date_string, "%Y-%j")
-            except ValueError:
+            except ValueError as e:
                 raise ParserError(
                     f"The provided day of year {day_of_year!r} is invalid."
-                )
+                ) from e
 
             parts["year"] = dt.year
             parts["month"] = dt.month

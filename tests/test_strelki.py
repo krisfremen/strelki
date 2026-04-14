@@ -253,7 +253,7 @@ class TestTestStrelkiRepresentation:
 class TestStrelkiAttribute:
     def test_getattr_base(self):
         with pytest.raises(AttributeError):
-            self.strelki.prop
+            _ = self.strelki.prop
 
     def test_getattr_week(self):
         assert self.strelki.week == 1
