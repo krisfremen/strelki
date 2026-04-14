@@ -7,7 +7,7 @@ try:
 except ImportError:
     from backports.zoneinfo import ZoneInfo
 
-from strelki import strelki, factory, formatter, locales, parser
+from strelki import factory, formatter, locales, parser, strelki
 
 
 @pytest.fixture(scope="class")

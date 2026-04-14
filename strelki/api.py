@@ -9,9 +9,9 @@ from datetime import tzinfo as dt_tzinfo
 from time import struct_time
 from typing import Any, List, Optional, Tuple, Type, Union, overload
 
-from strelki.strelki import TZ_EXPR, Arrow
 from strelki.constants import DEFAULT_LOCALE
 from strelki.factory import ArrowFactory
+from strelki.strelki import TZ_EXPR, Arrow
 
 # internal default factory.
 _factory = ArrowFactory()

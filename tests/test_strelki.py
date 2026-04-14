@@ -16,7 +16,7 @@ import simplejson as json
 from dateutil import tz
 from dateutil.relativedelta import FR, MO, SA, SU, TH, TU, WE
 
-from strelki import strelki, locales
+from strelki import locales, strelki
 
 from .utils import assert_datetime_equality
 
@@ -547,7 +547,9 @@ class TestStrelkiFalsePositiveDst:
             2016, 11, 6, 3, 59, tzinfo=ZoneInfo("America/New_York")
         )
         self.before_2 = strelki.Arrow(2016, 11, 6, tzinfo=ZoneInfo("America/New_York"))
-        self.after_1 = strelki.Arrow(2016, 11, 6, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.after_1 = strelki.Arrow(
+            2016, 11, 6, 4, tzinfo=ZoneInfo("America/New_York")
+        )
         self.after_2 = strelki.Arrow(
             2016, 11, 6, 23, 59, tzinfo=ZoneInfo("America/New_York")
         )
@@ -555,7 +557,9 @@ class TestStrelkiFalsePositiveDst:
             2018, 11, 4, 3, 59, tzinfo=ZoneInfo("America/New_York")
         )
         self.before_4 = strelki.Arrow(2018, 11, 4, tzinfo=ZoneInfo("America/New_York"))
-        self.after_3 = strelki.Arrow(2018, 11, 4, 4, tzinfo=ZoneInfo("America/New_York"))
+        self.after_3 = strelki.Arrow(
+            2018, 11, 4, 4, tzinfo=ZoneInfo("America/New_York")
+        )
         self.after_4 = strelki.Arrow(
             2018, 11, 4, 23, 59, tzinfo=ZoneInfo("America/New_York")
         )
@@ -579,7 +583,9 @@ class TestStrelkiConversion:
 
     # issue #368
     def test_to_pacific_then_utc(self):
-        result = strelki.Arrow(2018, 11, 4, 1, tzinfo="-08:00").to("US/Pacific").to("UTC")
+        result = (
+            strelki.Arrow(2018, 11, 4, 1, tzinfo="-08:00").to("US/Pacific").to("UTC")
+        )
         assert result == strelki.Arrow(2018, 11, 4, 9)
 
     # issue #368
@@ -768,14 +774,18 @@ class TestStrelkiShift:
 
         assert arw.shift(years=-1) == strelki.Arrow(2012, 5, 5, 12, 30, 45)
         assert arw.shift(quarters=-1) == strelki.Arrow(2013, 2, 5, 12, 30, 45)
-        assert arw.shift(quarters=-1, months=-1) == strelki.Arrow(2013, 1, 5, 12, 30, 45)
+        assert arw.shift(quarters=-1, months=-1) == strelki.Arrow(
+            2013, 1, 5, 12, 30, 45
+        )
         assert arw.shift(months=-1) == strelki.Arrow(2013, 4, 5, 12, 30, 45)
         assert arw.shift(weeks=-1) == strelki.Arrow(2013, 4, 28, 12, 30, 45)
         assert arw.shift(days=-1) == strelki.Arrow(2013, 5, 4, 12, 30, 45)
         assert arw.shift(hours=-1) == strelki.Arrow(2013, 5, 5, 11, 30, 45)
         assert arw.shift(minutes=-1) == strelki.Arrow(2013, 5, 5, 12, 29, 45)
         assert arw.shift(seconds=-1) == strelki.Arrow(2013, 5, 5, 12, 30, 44)
-        assert arw.shift(microseconds=-1) == strelki.Arrow(2013, 5, 5, 12, 30, 44, 999999)
+        assert arw.shift(microseconds=-1) == strelki.Arrow(
+            2013, 5, 5, 12, 30, 44, 999999
+        )
 
         # Not sure how practical these negative weekdays are
         assert arw.shift(weekday=-1) == arw.shift(weekday=SU)
@@ -1145,7 +1155,9 @@ class TestStrelkiRange:
 class TestStrelkiSpanRange:
     def test_year(self):
         result = list(
-            strelki.Arrow.span_range("year", datetime(2013, 2, 1), datetime(2016, 3, 31))
+            strelki.Arrow.span_range(
+                "year", datetime(2013, 2, 1), datetime(2016, 3, 31)
+            )
         )
 
         assert result == [
@@ -1181,7 +1193,9 @@ class TestStrelkiSpanRange:
 
     def test_month(self):
         result = list(
-            strelki.Arrow.span_range("month", datetime(2013, 1, 2), datetime(2013, 4, 15))
+            strelki.Arrow.span_range(
+                "month", datetime(2013, 1, 2), datetime(2013, 4, 15)
+            )
         )
 
         assert result == [
@@ -1193,7 +1207,9 @@ class TestStrelkiSpanRange:
 
     def test_week(self):
         result = list(
-            strelki.Arrow.span_range("week", datetime(2013, 2, 2), datetime(2013, 2, 28))
+            strelki.Arrow.span_range(
+                "week", datetime(2013, 2, 2), datetime(2013, 2, 28)
+            )
         )
 
         assert result == [
@@ -3076,7 +3092,8 @@ class TestStrelkiUtil:
         assert get_datetime(arw) == arw.datetime
         assert get_datetime(dt) == dt
         assert (
-            get_datetime(timestamp) == strelki.Arrow.utcfromtimestamp(timestamp).datetime
+            get_datetime(timestamp)
+            == strelki.Arrow.utcfromtimestamp(timestamp).datetime
         )
 
         with pytest.raises(ValueError) as raise_ctx:
@@ -3092,7 +3109,10 @@ class TestStrelkiUtil:
 
     def test_get_iteration_params(self):
         assert strelki.Arrow._get_iteration_params("end", None) == ("end", sys.maxsize)
-        assert strelki.Arrow._get_iteration_params(None, 100) == (strelki.Arrow.max, 100)
+        assert strelki.Arrow._get_iteration_params(None, 100) == (
+            strelki.Arrow.max,
+            100,
+        )
         assert strelki.Arrow._get_iteration_params(100, 120) == (100, 120)
 
         with pytest.raises(ValueError):

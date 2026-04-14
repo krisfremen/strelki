@@ -97,7 +97,9 @@ class TestDateTimeParser:
         assert mocked_parser.call_count == 100
 
     def test_parser_1_line_caching(self, mocker):
-        mocked_parser = mocker.patch("strelki.parser.DateTimeParser._generate_pattern_re")
+        mocked_parser = mocker.patch(
+            "strelki.parser.DateTimeParser._generate_pattern_re"
+        )
         self.parser = parser.DateTimeParser(cache_size=1)
 
         for _ in range(100):
@@ -116,7 +118,9 @@ class TestDateTimeParser:
         assert mocked_parser.call_args_list[2] == mocker.call(fmt="fmt_a")
 
     def test_parser_multiple_line_caching(self, mocker):
-        mocked_parser = mocker.patch("strelki.parser.DateTimeParser._generate_pattern_re")
+        mocked_parser = mocker.patch(
+            "strelki.parser.DateTimeParser._generate_pattern_re"
+        )
         self.parser = parser.DateTimeParser(cache_size=2)
 
         for _ in range(100):

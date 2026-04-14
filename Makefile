@@ -18,19 +18,19 @@ install-hooks:
 
 test:
 	rm -f .coverage coverage.xml
-	uv run pytest
+	uv run --extra test pytest
 
 lint:
-	uv run pre-commit run --all-files --show-diff-on-failure
+	uv run --extra test pre-commit run --all-files --show-diff-on-failure
 
 clean-docs:
 	rm -rf docs/_build
 
 docs:
-	uv run --directory docs make html
+	uv run --all-extras --directory docs make html
 
 live-docs: clean-docs
-	uv run sphinx-autobuild docs docs/_build/html
+	uv run --extra doc sphinx-autobuild docs docs/_build/html
 
 clean: clean-dist
 	rm -rf .venv venv .pytest_cache ./**/__pycache__

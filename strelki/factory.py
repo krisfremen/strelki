@@ -13,8 +13,8 @@ from time import struct_time
 from typing import Any, List, Optional, Tuple, Type, Union, overload
 
 from strelki import parser
-from strelki.strelki import TZ_EXPR, Arrow
 from strelki.constants import DEFAULT_LOCALE
+from strelki.strelki import TZ_EXPR, Arrow
 from strelki.util import is_timestamp, iso_to_gregorian
 
 
