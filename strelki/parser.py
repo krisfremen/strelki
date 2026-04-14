@@ -7,6 +7,7 @@ from datetime import tzinfo as dt_tzinfo
 from functools import lru_cache
 from typing import (
     Any,
+    Callable,
     ClassVar,
     Dict,
     Iterable,
@@ -408,7 +409,11 @@ class DateTimeParser:
         try:
             fmt_tokens: List[_FORMAT_TYPE]
             fmt_pattern_re: Pattern[str]
-            fmt_tokens, fmt_pattern_re = self._generate_pattern_re(fmt)
+            generate_pattern_re = cast(
+                Callable[[str], Tuple[List[_FORMAT_TYPE], Pattern[str]]],
+                self._generate_pattern_re,
+            )
+            fmt_tokens, fmt_pattern_re = generate_pattern_re(fmt)
         except re.error as e:
             raise ParserMatchError(
                 f"Failed to generate regular expression pattern: {e}."
