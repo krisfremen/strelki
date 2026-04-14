@@ -8,14 +8,6 @@
 * release please ([#3](https://github.com/krisfremen/strelki/issues/3)) ([8433675](https://github.com/krisfremen/strelki/commit/8433675d6f7bb104436516a15af5847127ea7985))
 
 
-### Bug Fixes
-
-* adding persian names of months and month-abbreviations and day-abbreviations in Gregorian calendar ([#1172](https://github.com/krisfremen/strelki/issues/1172)) ([016fb9e](https://github.com/krisfremen/strelki/commit/016fb9eb9b3835bcd4efc69dc048a0436bd7bfec))
-
-
-### Reverts
-
-* 679 renaming of MANIFEST[.in] for [#710](https://github.com/krisfremen/strelki/issues/710) ([1694d64](https://github.com/krisfremen/strelki/commit/1694d646691faee594434fa3d0baa2f1ee10095c))
 
 ## [1.4.0] (2025-10-18)
 
