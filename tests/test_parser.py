@@ -97,7 +97,9 @@ class TestDateTimeParser:
         assert mocked_parser.call_count == 100
 
     def test_parser_1_line_caching(self, mocker):
-        mocked_parser = mocker.patch("strelki.parser.DateTimeParser._generate_pattern_re")
+        mocked_parser = mocker.patch(
+            "strelki.parser.DateTimeParser._generate_pattern_re"
+        )
         self.parser = parser.DateTimeParser(cache_size=1)
 
         for _ in range(100):
@@ -116,7 +118,9 @@ class TestDateTimeParser:
         assert mocked_parser.call_args_list[2] == mocker.call(fmt="fmt_a")
 
     def test_parser_multiple_line_caching(self, mocker):
-        mocked_parser = mocker.patch("strelki.parser.DateTimeParser._generate_pattern_re")
+        mocked_parser = mocker.patch(
+            "strelki.parser.DateTimeParser._generate_pattern_re"
+        )
         self.parser = parser.DateTimeParser(cache_size=2)
 
         for _ in range(100):
@@ -233,9 +237,7 @@ class TestDateTimeParserParse:
         # NOTE: timestamps cannot be parsed from natural language strings (by removing the ^...$) because it will
         # break cases like "15 Jul 2000" and a format list (see issue #447)
         with pytest.raises(ParserError):
-            natural_lang_string = "Meet me at {} at the restaurant.".format(
-                float_timestamp
-            )
+            natural_lang_string = f"Meet me at {float_timestamp} at the restaurant."
             self.parser.parse(natural_lang_string, "X")
 
         with pytest.raises(ParserError):
@@ -898,13 +900,11 @@ class TestDateTimeParserRegex:
         for sep in time_separators:
             assert time_re.findall("12") == [("12", "", "", "", "")]
             assert time_re.findall(f"12{sep}35") == [("12", "35", "", "", "")]
-            assert time_re.findall("12{sep}35{sep}46".format(sep=sep)) == [
-                ("12", "35", "46", "", "")
-            ]
-            assert time_re.findall("12{sep}35{sep}46.952313".format(sep=sep)) == [
+            assert time_re.findall(f"12{sep}35{sep}46") == [("12", "35", "46", "", "")]
+            assert time_re.findall(f"12{sep}35{sep}46.952313") == [
                 ("12", "35", "46", ".", "952313")
             ]
-            assert time_re.findall("12{sep}35{sep}46,952313".format(sep=sep)) == [
+            assert time_re.findall(f"12{sep}35{sep}46,952313") == [
                 ("12", "35", "46", ",", "952313")
             ]
 

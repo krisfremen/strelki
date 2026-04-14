@@ -49,8 +49,11 @@ test = [
     "pytest",
     "pytest-cov",
     "pytest-mock",
-    "pytz==2025.2",
+    "pytz==2026.1",
+    "ruff",
     "simplejson==3.*",
+    "ty",
+    "types-python-dateutil>=2.8.10",
 ]
 doc = [
     "doc8",
@@ -67,3 +70,25 @@ Issues = "https://github.com/krisfremen/strelki/issues"
 
 [tool.flit.module]
 name = "strelki"
+
+[tool.pytest.ini_options]
+addopts = "-v --cov-branch --cov=strelki --cov-fail-under=99 --cov-report=term-missing --cov-report=xml --junitxml=junit.xml -o junit_family=legacy"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["ANN", "B", "E", "F", "I", "UP", "W"]
+ignore = ["ANN401", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"strelki/__init__.py" = ["F401"]
+"tests/*" = ["ANN001", "ANN201"]
+
+[tool.ty.src]
+include = ["strelki"]
+
+[tool.ty.environment]
+python-version = "3.9"

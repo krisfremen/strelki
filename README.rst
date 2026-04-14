@@ -1,5 +1,5 @@
 Strelki: Better dates & times for Python
-======================================
+==================================================
 
 .. start-inclusion-marker-do-not-remove
 
@@ -23,17 +23,19 @@ Strelki: Better dates & times for Python
    :alt: License
    :target: https://pypi.python.org/pypi/strelki
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :alt: Code Style: Black
-   :target: https://github.com/psf/black
+.. image:: https://img.shields.io/badge/linting-ruff-blue.svg
+   :alt: Linting: Ruff
+   :target: https://github.com/astral-sh/ruff
 
 
 **Strelki** is a Python library that offers a sensible and human-friendly approach to creating, manipulating, formatting and converting dates, times and timestamps. It implements and updates the datetime type, plugging gaps in functionality and providing an intelligent module API that supports many common creation scenarios. Simply put, it helps you work with dates and times with fewer imports and a lot less code.
 
 Strelki is plural for arrow in Macedonian. Strelki takes its name from the `arrow of time <https://en.wikipedia.org/wiki/Arrow_of_time>`_ and is heavily inspired by `moment.js <https://github.com/moment/moment>`_ and `requests <https://github.com/psf/requests>`_.
 
+Strelki is an experimental fork for testing new ideas. Upstream `Arrow <https://github.com/arrow-py/arrow>`_ should still be your default choice unless you specifically need features that are experimental and only implemented here.
+
 Why use Strelki over built-in modules?
-------------------------------------
+--------------------------------------
 
 Python's standard library and some other low-level modules have near-complete date, time and timezone functionality, but don't work very well from a usability perspective:
 
@@ -123,12 +125,12 @@ Contributions are welcome for both code and localizations (adding and updating l
 #. Find an issue or feature to tackle on the `issue tracker <https://github.com/krisfremen/strelki/issues>`_. Issues marked with the `"good first issue" label <https://github.com/krisfremen/strelki/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>`_ may be a great place to start!
 #. Fork `this repository <https://github.com/krisfremen/strelki>`_ on GitHub and begin making changes in a branch.
 #. Add a few tests to ensure that the bug was fixed or the feature works as expected.
-#. Run the entire test suite and linting checks by running one of the following commands: ``tox && tox -e lint,docs`` (if you have `tox <https://tox.readthedocs.io>`_ installed) **OR** ``make build39 && make test && make lint`` (if you do not have Python 3.9 installed, replace ``build39`` with the latest Python version on your system).
+#. Run the development environment and checks with ``uv sync --all-extras && uv run pytest && uv run pre-commit run --all-files --show-diff-on-failure && uv run --directory docs make html``.
 #. Submit a pull request and await feedback 😃.
 
 If you have any questions along the way, feel free to ask them `here <https://github.com/krisfremen/strelki/discussions>`_.
 
 Support Strelki
--------------
+---------------
 
 `Open Collective <https://opencollective.com/>`_ is an online funding platform that provides tools to raise money and share your finances with full transparency. It is the platform of choice for individuals and companies to make one-time or recurring donations directly to the project. If you are interested in making a financial contribution, please visit the `Strelki collective <https://opencollective.com/strelki>`_.

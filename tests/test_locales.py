@@ -1,6 +1,6 @@
 import pytest
 
-from strelki import strelki, locales
+from strelki import locales, strelki
 
 
 @pytest.mark.usefixtures("lang_locales")

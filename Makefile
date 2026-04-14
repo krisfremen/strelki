@@ -1,52 +1,53 @@
-.PHONY: auto test docs clean
+.PHONY: auto sync sync-doc sync-all sync38 sync39 sync310 sync311 sync312 sync313 sync314 test lint typecheck lint-docs docs clean clean-docs clean-dist live-docs build-dist install-hooks
 
-auto: build311
+auto: sync311
 
-build38: PYTHON_VER = python3.8
-build39: PYTHON_VER = python3.9
-build310: PYTHON_VER = python3.10
-build311: PYTHON_VER = python3.11
-build312: PYTHON_VER = python3.12
-build313: PYTHON_VER = python3.13
-build314: PYTHON_VER = python3.14
+sync38: UV_PYTHON = 3.8
+sync39: UV_PYTHON = 3.9
+sync310: UV_PYTHON = 3.10
+sync311: UV_PYTHON = 3.11
+sync312: UV_PYTHON = 3.12
+sync313: UV_PYTHON = 3.13
+sync314: UV_PYTHON = 3.14
+sync: UV_EXTRAS = test
+sync-doc: UV_EXTRAS = doc
+sync-all: UV_EXTRAS = all
 
-build36 build37 build38 build39 build310 build311 build312 build313 build314: clean
-	$(PYTHON_VER) -m venv venv
-	. venv/bin/activate; \
-	pip install -U pip setuptools wheel; \
-	pip install -r requirements/requirements-tests.txt; \
-	pip install -r requirements/requirements-docs.txt; \
-	pre-commit install
+sync sync-doc sync-all sync38 sync39 sync310 sync311 sync312 sync313 sync314:
+	uv sync --python $(or $(UV_PYTHON),3.11) $(if $(filter all,$(UV_EXTRAS)),--all-extras,$(foreach extra,$(UV_EXTRAS),--extra $(extra)))
+
+install-hooks:
+	uv run --extra test pre-commit install
 
 test:
 	rm -f .coverage coverage.xml
-	. venv/bin/activate; \
-	pytest
+	uv run --extra test pytest
 
 lint:
-	. venv/bin/activate; \
-	pre-commit run --all-files --show-diff-on-failure
+	uv run --extra test pre-commit run --all-files --show-diff-on-failure
+
+typecheck:
+	uv run --extra test ty check
+
+lint-docs:
+	uv run --all-extras doc8 docs/index.rst README.rst --extension .rst --ignore D001
+	uv run --all-extras --directory docs make html
 
 clean-docs:
 	rm -rf docs/_build
 
 docs:
-	. venv/bin/activate; \
-	cd docs; \
-	make html
+	uv run --all-extras --directory docs make html
 
 live-docs: clean-docs
-	. venv/bin/activate; \
-	sphinx-autobuild docs docs/_build/html
+	uv run --extra doc sphinx-autobuild docs docs/_build/html
 
 clean: clean-dist
-	rm -rf venv .pytest_cache ./**/__pycache__
+	rm -rf .venv venv .pytest_cache ./**/__pycache__
 	rm -f .coverage coverage.xml ./**/*.pyc
 
 clean-dist:
 	rm -rf dist build *.egg *.eggs *.egg-info
 
 build-dist: clean-dist
-	. venv/bin/activate; \
-	pip install -U flit; \
-	flit build
+	uv build

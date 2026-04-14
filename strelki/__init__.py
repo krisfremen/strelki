@@ -1,6 +1,5 @@
 from ._version import __version__
 from .api import get, now, utcnow
-from .strelki import Arrow
 from .factory import ArrowFactory
 from .formatter import (
     FORMAT_ATOM,
@@ -16,6 +15,7 @@ from .formatter import (
     FORMAT_W3C,
 )
 from .parser import ParserError
+from .strelki import Arrow
 
 # https://mypy.readthedocs.io/en/stable/command_line.html#cmdoption-mypy-no-implicit-reexport
 # Mypy with --strict or --no-implicit-reexport requires an explicit reexport.

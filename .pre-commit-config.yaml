@@ -12,42 +12,29 @@ repos:
       - id: check-builtin-literals
       - id: debug-statements
       - id: end-of-file-fixer
-      - id: requirements-txt-fixer
-        args: [requirements/requirements.txt, requirements/requirements-docs.txt, requirements/requirements-tests.txt]
       - id: trailing-whitespace
-  - repo: https://github.com/timothycrosley/isort
-    rev: 7.0.0
-    hooks:
-      - id: isort
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.2
-    hooks:
-      - id: pyupgrade
-        args: [--py36-plus]
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
-      - id: python-no-eval
-      - id: python-check-blanket-noqa
-      - id: python-check-mock-methods
-      - id: python-use-type-annotations
       - id: rst-backticks
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
       - id: text-unicode-replacement-char
-  - repo: https://github.com/psf/black
-    rev: 25.12.0
+      - id: python-no-eval
+      - id: python-check-blanket-noqa
+      - id: python-check-mock-methods
+      - id: python-use-type-annotations
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.2
     hooks:
-      - id: black
-        args: [--safe, --quiet, --target-version=py36]
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.3.0
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+  - repo: local
     hooks:
-      - id: flake8
-        additional_dependencies: [flake8-bugbear,flake8-annotations]
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.0
-    hooks:
-      - id: mypy
-        args: [--cache-fine-grained, --show-error-codes]
-        additional_dependencies: [types-python-dateutil]
+      - id: ty-check
+        name: ty check
+        entry: uv run --extra test ty check
+        language: system
+        types: [python]
+        pass_filenames: false
