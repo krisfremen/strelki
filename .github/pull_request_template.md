@@ -5,7 +5,7 @@ Thank you for taking the time to improve Strelki! Before submitting your pull re
 <!-- Check boxes by placing an x in the brackets like this: [x] -->
 - [ ] 🧪  Added **tests** for changed code.
 - [ ] 🛠️  All tests **pass** when run locally (run `uv run pytest` or `make test` to find out!).
-- [ ] 🧹  All linting checks **pass** when run locally (run `uv run pre-commit run --all-files --show-diff-on-failure` or `make lint` to find out!).
+- [ ] 🧹  All linting and type checks **pass** when run locally (run `uv run pre-commit run --all-files --show-diff-on-failure` or `make lint` to find out!).
 - [ ] 📚  Updated **documentation** for changed code.
 - [ ] ⏩  Code is **up-to-date** with the `master` branch.
 

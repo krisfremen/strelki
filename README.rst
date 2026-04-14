@@ -23,9 +23,9 @@ Strelki: Better dates & times for Python
    :alt: License
    :target: https://pypi.python.org/pypi/strelki
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :alt: Code Style: Black
-   :target: https://github.com/psf/black
+.. image:: https://img.shields.io/badge/linting-ruff-blue.svg
+   :alt: Linting: Ruff
+   :target: https://github.com/astral-sh/ruff
 
 
 **Strelki** is a Python library that offers a sensible and human-friendly approach to creating, manipulating, formatting and converting dates, times and timestamps. It implements and updates the datetime type, plugging gaps in functionality and providing an intelligent module API that supports many common creation scenarios. Simply put, it helps you work with dates and times with fewer imports and a lot less code.

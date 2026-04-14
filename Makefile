@@ -1,4 +1,4 @@
-.PHONY: auto sync sync38 sync39 sync310 sync311 sync312 sync313 sync314 test lint docs clean clean-docs clean-dist live-docs build-dist install-hooks
+.PHONY: auto sync sync38 sync39 sync310 sync311 sync312 sync313 sync314 test lint typecheck docs clean clean-docs clean-dist live-docs build-dist install-hooks
 
 auto: sync311
 
@@ -22,6 +22,9 @@ test:
 
 lint:
 	uv run --extra test pre-commit run --all-files --show-diff-on-failure
+
+typecheck:
+	uv run --extra test ty check
 
 clean-docs:
 	rm -rf docs/_build

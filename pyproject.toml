@@ -50,7 +50,9 @@ test = [
     "pytest-cov",
     "pytest-mock",
     "pytz==2025.2",
+    "ruff",
     "simplejson==3.*",
+    "ty",
     "types-python-dateutil>=2.8.10",
 ]
 doc = [
@@ -73,7 +75,17 @@ name = "strelki"
 addopts = "-v --cov-branch --cov=strelki --cov-fail-under=99 --cov-report=term-missing --cov-report=xml --junitxml=junit.xml -o junit_family=legacy"
 testpaths = ["tests"]
 
-[tool.isort]
+[tool.ruff]
 line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["ANN", "B", "E", "F", "I", "UP", "W"]
+ignore = ["ANN101", "ANN102", "ANN401", "E501", "W503"]
+
+[tool.ruff.lint.per-file-ignores]
+"strelki/__init__.py" = ["F401"]
+"tests/*" = ["ANN001", "ANN201"]
+
+[tool.ty.src]
+include = ["strelki"]
