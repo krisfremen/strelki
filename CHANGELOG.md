@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0 (2026-04-14)
+
+
+### Features
+
+* release please ([#3](https://github.com/krisfremen/strelki/issues/3)) ([8433675](https://github.com/krisfremen/strelki/commit/8433675d6f7bb104436516a15af5847127ea7985))
+
+
+
 ## [1.4.0] (2025-10-18)
 
 ### Features
