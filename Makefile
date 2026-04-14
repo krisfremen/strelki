@@ -1,4 +1,4 @@
-.PHONY: auto sync sync38 sync39 sync310 sync311 sync312 sync313 sync314 test lint typecheck lint-docs docs clean clean-docs clean-dist live-docs build-dist install-hooks
+.PHONY: auto sync sync-doc sync-all sync38 sync39 sync310 sync311 sync312 sync313 sync314 test lint typecheck lint-docs docs clean clean-docs clean-dist live-docs build-dist install-hooks
 
 auto: sync311
 
@@ -9,9 +9,12 @@ sync311: UV_PYTHON = 3.11
 sync312: UV_PYTHON = 3.12
 sync313: UV_PYTHON = 3.13
 sync314: UV_PYTHON = 3.14
+sync: UV_EXTRAS = test
+sync-doc: UV_EXTRAS = doc
+sync-all: UV_EXTRAS = all
 
-sync sync38 sync39 sync310 sync311 sync312 sync313 sync314:
-	uv sync --python $(or $(UV_PYTHON),3.11) --all-extras
+sync sync-doc sync-all sync38 sync39 sync310 sync311 sync312 sync313 sync314:
+	uv sync --python $(or $(UV_PYTHON),3.11) $(if $(filter all,$(UV_EXTRAS)),--all-extras,$(foreach extra,$(UV_EXTRAS),--extra $(extra)))
 
 install-hooks:
 	uv run --extra test pre-commit install

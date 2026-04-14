@@ -62,7 +62,7 @@ jobs:
         with:
           enable-cache: true
       - name: Install dependencies
-        run: make sync
+        run: make sync-all
       - name: Lint code
         run: make lint
       - name: Lint docs

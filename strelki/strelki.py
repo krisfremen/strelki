@@ -1175,7 +1175,8 @@ class Arrow:
         :param locale: (optional) a ``str`` specifying a locale.  Defaults to 'en-us'.
         :param only_distance: (optional) returns only time difference eg: "11 seconds" without "in" or "ago" part.
         :param granularity: (optional) defines the precision of the output. Set it to strings 'second', 'minute',
-                           'hour', 'day', 'week', 'month' or 'year' or a list of any combination of these strings
+                           'hour', 'day', 'week', 'month', 'quarter' or 'year' or a list of any combination of
+                           these strings
 
         Usage::
 
