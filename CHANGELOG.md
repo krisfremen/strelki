@@ -5,8 +5,6 @@
 
 ### Features
 
-* add dependabot for GH actions ([#1193](https://github.com/krisfremen/strelki/issues/1193)) ([96a88a6](https://github.com/krisfremen/strelki/commit/96a88a61714722d602a0dbb528cf89aed7007c97))
-* release please ([eb18bd9](https://github.com/krisfremen/strelki/commit/eb18bd902453f39d5603e7b2203ac96e7891c6a8))
 * release please ([#3](https://github.com/krisfremen/strelki/issues/3)) ([8433675](https://github.com/krisfremen/strelki/commit/8433675d6f7bb104436516a15af5847127ea7985))
 
 
