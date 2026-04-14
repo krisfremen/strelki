@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.0](https://github.com/krisfremen/strelki/compare/strelki-v0.1.0...strelki-v0.2.0) (2026-04-14)
+
+
+### Features
+
+* add dependabot for GH actions ([#1193](https://github.com/krisfremen/strelki/issues/1193)) ([96a88a6](https://github.com/krisfremen/strelki/commit/96a88a61714722d602a0dbb528cf89aed7007c97))
+* release please ([eb18bd9](https://github.com/krisfremen/strelki/commit/eb18bd902453f39d5603e7b2203ac96e7891c6a8))
+* release please ([#3](https://github.com/krisfremen/strelki/issues/3)) ([8433675](https://github.com/krisfremen/strelki/commit/8433675d6f7bb104436516a15af5847127ea7985))
+
+
+### Bug Fixes
+
+* adding persian names of months and month-abbreviations and day-abbreviations in Gregorian calendar ([#1172](https://github.com/krisfremen/strelki/issues/1172)) ([016fb9e](https://github.com/krisfremen/strelki/commit/016fb9eb9b3835bcd4efc69dc048a0436bd7bfec))
+* release please config ([#5](https://github.com/krisfremen/strelki/issues/5)) ([6a4dbf5](https://github.com/krisfremen/strelki/commit/6a4dbf5f49de82ea9f1faa7fa8e4a4195202eb07))
+
 ## 0.1.0 (2026-04-14)
 
 
