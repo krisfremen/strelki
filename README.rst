@@ -1,5 +1,5 @@
 Strelki: Better dates & times for Python
-======================================
+==================================================
 
 .. start-inclusion-marker-do-not-remove
 
@@ -35,7 +35,7 @@ Strelki is plural for arrow in Macedonian. Strelki takes its name from the `arro
 Strelki is an experimental fork for testing new ideas. Upstream `Arrow <https://github.com/arrow-py/arrow>`_ should still be your default choice unless you specifically need features that are experimental and only implemented here.
 
 Why use Strelki over built-in modules?
-------------------------------------
+--------------------------------------
 
 Python's standard library and some other low-level modules have near-complete date, time and timezone functionality, but don't work very well from a usability perspective:
 
@@ -131,6 +131,6 @@ Contributions are welcome for both code and localizations (adding and updating l
 If you have any questions along the way, feel free to ask them `here <https://github.com/krisfremen/strelki/discussions>`_.
 
 Support Strelki
--------------
+---------------
 
 `Open Collective <https://opencollective.com/>`_ is an online funding platform that provides tools to raise money and share your finances with full transparency. It is the platform of choice for individuals and companies to make one-time or recurring donations directly to the project. If you are interested in making a financial contribution, please visit the `Strelki collective <https://opencollective.com/strelki>`_.

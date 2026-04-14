@@ -1,5 +1,5 @@
 Strelki: Better dates & times for Python
-======================================
+==================================================
 
 Release v\ |release| (`Installation`_) (`Changelog <releases.html>`_)
 

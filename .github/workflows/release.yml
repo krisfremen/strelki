@@ -19,7 +19,7 @@ jobs:
         with:
           enable-cache: true
       - name: Build package
-        run: uv build
+        run: make build-dist
       - name: Publish package to PyPI
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}

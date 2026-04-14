@@ -28,9 +28,9 @@ jobs:
         with:
           enable-cache: true
       - name: Install dependencies
-        run: uv sync --extra test
-      - name: Test with uv
-        run: uv run pytest
+        run: make sync UV_PYTHON=${{ matrix.python-version }}
+      - name: Test with make
+        run: make test
       - name: Upload coverage to Codecov
         if: ${{ success() }}
         uses: codecov/codecov-action@v5
@@ -62,10 +62,8 @@ jobs:
         with:
           enable-cache: true
       - name: Install dependencies
-        run: uv sync --all-extras
+        run: make sync
       - name: Lint code
-        run: uv run pre-commit run --all-files --show-diff-on-failure
+        run: make lint
       - name: Lint docs
-        run: |
-          uv run doc8 docs/index.rst README.rst --extension .rst --ignore D001
-          uv run --directory docs make html
+        run: make lint-docs

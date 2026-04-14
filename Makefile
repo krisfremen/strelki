@@ -1,4 +1,4 @@
-.PHONY: auto sync sync38 sync39 sync310 sync311 sync312 sync313 sync314 test lint typecheck docs clean clean-docs clean-dist live-docs build-dist install-hooks
+.PHONY: auto sync sync38 sync39 sync310 sync311 sync312 sync313 sync314 test lint typecheck lint-docs docs clean clean-docs clean-dist live-docs build-dist install-hooks
 
 auto: sync311
 
@@ -25,6 +25,10 @@ lint:
 
 typecheck:
 	uv run --extra test ty check
+
+lint-docs:
+	uv run --all-extras doc8 docs/index.rst README.rst --extension .rst --ignore D001
+	uv run --all-extras --directory docs make html
 
 clean-docs:
 	rm -rf docs/_build
