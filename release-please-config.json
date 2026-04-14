@@ -2,10 +2,10 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "release-search-depth": 50,
   "commit-search-depth": 100,
+  "include-v-in-tag": true,
   "packages": {
     ".": {
       "release-type": "python",
-      "package-name": "strelki",
       "version-file": "strelki/_version.py"
     }
   }
