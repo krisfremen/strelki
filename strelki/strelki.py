@@ -1211,7 +1211,9 @@ class Arrow:
                 "Argument must be of type None, Arrow, or datetime."
             )
 
-        granularity_value: Union[_GRANULARITY, _HUMANIZE_GRANULARITY, List[_HUMANIZE_GRANULARITY]]
+        granularity_value: Union[
+            _GRANULARITY, _HUMANIZE_GRANULARITY, List[_HUMANIZE_GRANULARITY]
+        ]
         if isinstance(granularity, list) and len(granularity) == 1:
             granularity_value = granularity[0]
         else:
@@ -1274,7 +1276,9 @@ class Arrow:
 
                 elif diff < self._SECS_PER_WEEK:
                     days = sign * max(delta_second // self._SECS_PER_DAY, 2)
-                    return locale_obj.describe("days", days, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "days", days, only_distance=only_distance
+                    )
 
                 elif calendar_months >= 1 and diff < self._SECS_PER_YEAR:
                     if calendar_months == 1:
@@ -1288,7 +1292,9 @@ class Arrow:
                         )
 
                 elif diff < self._SECS_PER_WEEK * 2:
-                    return locale_obj.describe("week", sign, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "week", sign, only_distance=only_distance
+                    )
 
                 elif diff < self._SECS_PER_MONTH:
                     weeks = sign * max(delta_second // self._SECS_PER_WEEK, 2)
@@ -1297,7 +1303,9 @@ class Arrow:
                     )
 
                 elif diff < self._SECS_PER_YEAR * 2:
-                    return locale_obj.describe("year", sign, only_distance=only_distance)
+                    return locale_obj.describe(
+                        "year", sign, only_distance=only_distance
+                    )
 
                 else:
                     years = sign * max(delta_second // self._SECS_PER_YEAR, 2)
@@ -1353,7 +1361,9 @@ class Arrow:
                     if _frame in granularity_list:
                         value = sign * _delta / self._SECS_MAP[_frame]
                         _delta %= self._SECS_MAP[_frame]
-                        timeframes.append((_timeframe_for_granularity(_frame, value), value))
+                        timeframes.append(
+                            (_timeframe_for_granularity(_frame, value), value)
+                        )
                     return _delta
 
                 delta = float(delta_second)
