@@ -14,7 +14,7 @@ sync sync38 sync39 sync310 sync311 sync312 sync313 sync314:
 	uv sync --python $(or $(UV_PYTHON),3.11) --all-extras
 
 install-hooks:
-	uv run pre-commit install
+	uv run --extra test pre-commit install
 
 test:
 	rm -f .coverage coverage.xml
