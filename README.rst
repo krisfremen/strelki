@@ -127,6 +127,8 @@ Contributions are welcome for both code and localizations (adding and updating l
 #. Add a few tests to ensure that the bug was fixed or the feature works as expected.
 #. Run the development environment and checks with ``uv sync --all-extras && uv run pytest && uv run pre-commit run --all-files --show-diff-on-failure && uv run --directory docs make html``.
 #. Submit a pull request and await feedback 😃.
+#. Use a conventional commit-style PR title such as ``fix: ...`` or ``feat: ...`` so release-please can infer the next version.
+
 
 If you have any questions along the way, feel free to ask them `here <https://github.com/krisfremen/strelki/discussions>`_.
 

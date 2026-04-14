@@ -20,6 +20,7 @@ release = about["__version__"]
 # -- General configuration ---------------------------------------------------
 
 extensions = [
+    "myst_parser",
     "sphinx.ext.autodoc",
     "sphinx_autodoc_typehints",
     "sphinx_rtd_theme",
@@ -30,7 +31,10 @@ templates_path = []
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 master_doc = "index"
-source_suffix = ".rst"
+source_suffix = {
+    ".md": "markdown",
+    ".rst": "restructuredtext",
+}
 pygments_style = "sphinx"
 
 language = "en"
