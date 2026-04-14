@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/krisfremen/strelki/compare/v0.1.0...v0.1.1) (2026-04-14)
+
+
+### Bug Fixes
+
+* release please config ([#5](https://github.com/krisfremen/strelki/issues/5)) ([6a4dbf5](https://github.com/krisfremen/strelki/commit/6a4dbf5f49de82ea9f1faa7fa8e4a4195202eb07))
+
 ## 0.1.0 (2026-04-14)
 
 
